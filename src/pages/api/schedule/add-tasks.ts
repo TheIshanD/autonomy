@@ -20,7 +20,7 @@ const addTasks = async (input : addTasksProps) => {
   const prompt = 
     ""
 
-
+  
   const response = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: prompt,
