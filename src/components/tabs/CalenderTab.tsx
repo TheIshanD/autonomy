@@ -164,7 +164,7 @@ export default function CalenderTab(props : any) {
                 </FormControl>
 
                 <Flex direction="column" mt="20px">
-                    <Heading>Today's Tasks</Heading>
+                    <Heading>Today&apos;s Tasks</Heading>
                     {
                     tasks.map((task, key)=>{
                         return (key==0?null:<Text key={key}>{key+". "+task}</Text>)
