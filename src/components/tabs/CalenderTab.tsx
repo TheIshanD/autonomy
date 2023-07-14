@@ -6,7 +6,7 @@ import "react-color-palette/lib/css/styles.css";
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage, BreadcrumbLink
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage, BreadcrumbLink, Radio, RadioGroup, Tooltip
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
@@ -29,7 +29,12 @@ export default function CalenderTab(props : any) {
     const [modalTaskIndexEnd, setModalTaskIndexEnd] = React.useState(-1);
     const [modalTaskInput, setModalTaskInput] = React.useState("");
 
-    const [color, setColor] = useColor("hex", "#FF6969");
+    const [modalStartOutOfBoundsError, setModalStartOutOfBoundsError] = React.useState(false);
+    const [modalEndOutOfBoundsError, setModalEndOutOfBoundsError] = React.useState(false);
+
+    const [modalTaskBetweenError, setModalTaskBetweenError] = React.useState("");
+
+    const [color, setColor] = React.useState("#FF6969");
 
     const awakeSchedule = ()=>{
         var tmpArr = [];
@@ -57,13 +62,13 @@ export default function CalenderTab(props : any) {
 
     const addTaskManually = ()=>{
         if(wakeTime < sleepTime && (toAbsoluteTime(modalTaskIndex) < wakeTime || toAbsoluteTime(modalTaskIndex) > sleepTime)) {
-            console.log("start time is out of bounds")
+            setModalStartOutOfBoundsError(true)
         } else if (wakeTime > sleepTime && toAbsoluteTime(modalTaskIndex) > sleepTime && toAbsoluteTime(modalTaskIndex) < wakeTime) {
-            console.log("start time is out of bounds")
+            setModalStartOutOfBoundsError(true)
         } else if(wakeTime < sleepTime && (toAbsoluteTime(modalTaskIndexEnd) < wakeTime || toAbsoluteTime(modalTaskIndexEnd) > sleepTime)) {
-            console.log("end time is out of bounds")
+            setModalEndOutOfBoundsError(true)
         } else if (wakeTime > sleepTime && toAbsoluteTime(modalTaskIndexEnd) > sleepTime && toAbsoluteTime(modalTaskIndexEnd) < wakeTime) {
-            console.log("end time is out of bounds")
+            setModalEndOutOfBoundsError(true)
         } else if(modalTaskInput=="") {
             setHasManualTaskAddTitleError(true);
         } else if (modalTaskIndex >= modalTaskIndexEnd) {
@@ -74,21 +79,20 @@ export default function CalenderTab(props : any) {
             while(start != modalTaskIndexEnd) {
                 if(schedule[toAbsoluteTime(start)].activity != "[EMPTY]") {
                     hasTaskInBetween = true;
+                    setModalTaskBetweenError(schedule[toAbsoluteTime(start)].activity)
                     break;
                 }
 
                 start += 1;
                 start %= 48;
             }
-            if(hasTaskInBetween) {
-                console.log("There is already a task where you want to schedule your task")
-            } else {
+            if(!hasTaskInBetween) {
                 const tempSchedule = [...schedule];
                 var curr = modalTaskIndex;
                 var isFirstIteration = true;
                 while(curr != modalTaskIndexEnd) {
                     tempSchedule[(curr + wakeTime)%48].activity = modalTaskInput;
-                    tempSchedule[(curr + wakeTime)%48].color = color.hex;
+                    tempSchedule[(curr + wakeTime)%48].color = color;
                     tempSchedule[(curr + wakeTime)%48].isContinuation = !isFirstIteration;
         
                     curr += 1;
@@ -99,8 +103,13 @@ export default function CalenderTab(props : any) {
     
                 setSchedule(tempSchedule)
                 setModalTaskInput("");
+                setModalTaskBetweenError("");
                 setHasManualTaskAddTitleError(false)
-                setHasManualTaskAddTimeError(false);
+                setHasManualTaskAddTimeError(false)
+                setModalStartOutOfBoundsError(false)
+                setModalEndOutOfBoundsError(false)
+                setModalStartOutOfBoundsError(false)
+                setModalEndOutOfBoundsError(false)
                 onClose();
             }
         }
@@ -131,6 +140,15 @@ export default function CalenderTab(props : any) {
         setModalTaskIndexEnd((index - wakeTime + 48) % 48)
     }
 
+    const closeModal = ()=>{
+        setHasManualTaskAddTimeError(false)
+        setHasManualTaskAddTitleError(false)
+        setModalStartOutOfBoundsError(false)
+        setModalEndOutOfBoundsError(false)
+        setModalTaskBetweenError("")
+        onClose()
+    }
+
     return (
     <Flex direction="column" p="30px" gap=" 30px" width="100%">
         <Heading size="2xl">Calendar</Heading>
@@ -146,10 +164,11 @@ export default function CalenderTab(props : any) {
                                 <Flex direction="column" width="90%" height="100%" align="center">
                                     <Divider m={0}/>
 
-                                    <Flex onClick={()=>{setModalTaskIndex(key);setModalTaskIndexEnd((key + 1)%48);onOpen()}} opacity="0" width="80%" height="100%" justify="center" align="center" _hover={{background: "brand.400", opacity: "1"}}>
-                                        <Icon as={FaPlusSquare} boxSize="50%"/>
-                                    </Flex>
-
+                                    <Tooltip hasArrow label='Add Task' bg="#00ab66" placement='top'>
+                                        <Flex onClick={()=>{setModalTaskIndex(key);setModalTaskIndexEnd((key + 1)%48);onOpen()}} opacity="0" width="80%" height="100%" justify="center" align="center" _hover={{background: "#00ab66", opacity: "1"}}>
+                                            <Icon as={FaPlusSquare} color="white" boxSize="50%"/>
+                                        </Flex>
+                                    </Tooltip>
                                 </Flex>
                             }
                             {slot.activity!="[EMPTY]" &&
@@ -161,12 +180,15 @@ export default function CalenderTab(props : any) {
                                             <Heading size="md" mr="5px">{slot.activity}</Heading>
                                             <Text fontSize="sm">{slot.start}</Text>
                                             <Spacer />
-                                            <IconButton
-                                                colorScheme='red'
-                                                aria-label='Search database'
-                                                icon={<Icon as={FaWindowClose}/>}
-                                                onClick={()=>{removeActivity(key)}}
-                                            />
+                                            <Tooltip hasArrow label='Delete Task' bg='red.600' placement='top'>
+                                                <IconButton
+                                                    colorScheme='red'
+                                                    aria-label='Search database'
+                                                    boxSize="32px"
+                                                    icon={<Icon as={FaWindowClose} boxSize={"20px"}/>}
+                                                    onClick={()=>{removeActivity(key)}}
+                                                />
+                                            </Tooltip>
                                         </Flex>
                                     </Flex>
 
@@ -209,10 +231,10 @@ export default function CalenderTab(props : any) {
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-            <ModalHeader background={color.hex}>Add Task To Time</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader background={color}>Add Task To Time</ModalHeader>
+            <ModalCloseButton onClick={closeModal}/>
             <ModalBody>
-                <Flex direction="column" width="100%" gap="30px">
+                <Flex direction="column" width="100%" gap="20px">
                     <FormControl isInvalid={hasManualTaskAddTitleError}>
                         <FormLabel>Task Title</FormLabel>
                         <Input bg="white" value={modalTaskInput} onChange={(e)=>{setModalTaskInput(e.target.value)}} placeholder='Do Something' type="text"/>
@@ -220,8 +242,12 @@ export default function CalenderTab(props : any) {
                         <FormHelperText>Describe The Task</FormHelperText>
                     </FormControl>
 
+                    {modalTaskBetweenError &&
+                        <Text fontWeight="900" color="red.600">This task cannot be placed because its timing conflicts with {modalTaskBetweenError}</Text>
+                    }
+
                     <Flex direction="row" gap="20px">
-                        <FormControl isRequired isInvalid={hasManualTaskAddTimeError}>
+                        <FormControl isRequired isInvalid={(hasManualTaskAddTimeError || modalTaskBetweenError!="" || modalStartOutOfBoundsError)}>
                             <FormLabel>Task Start Time</FormLabel>
                             <Select value={(modalTaskIndex + wakeTime)%48} onChange={(e)=>{onChangeStartTask(e)}} bg="white">
                                 <chakra.option value={0}>12:00 AM</chakra.option>
@@ -273,10 +299,11 @@ export default function CalenderTab(props : any) {
                                 <chakra.option value={46}>11:00 PM</chakra.option>
                                 <chakra.option value={47}>11:30 PM</chakra.option>
                             </Select>
-                            <FormErrorMessage>Start Time Must Be Before End Time</FormErrorMessage>
+                            {hasManualTaskAddTimeError && <FormErrorMessage>Start Time Must Be Before End Time</FormErrorMessage>}
+                            {modalStartOutOfBoundsError && <FormErrorMessage>Start Time Must Be After Wake Up</FormErrorMessage>}
                         </FormControl>
 
-                        <FormControl isRequired isInvalid={hasManualTaskAddTimeError}>
+                        <FormControl isRequired isInvalid={hasManualTaskAddTimeError || modalTaskBetweenError!="" || modalEndOutOfBoundsError}>
                             <FormLabel>Task End Time</FormLabel>
                             <Select value={(modalTaskIndexEnd + wakeTime)%48} onChange={(e)=>{onChangeEndTask(e)}} bg="white">
                                 <chakra.option value={0}>12:00 AM</chakra.option>
@@ -329,17 +356,28 @@ export default function CalenderTab(props : any) {
                                 <chakra.option value={47}>11:30 PM</chakra.option>
                             </Select>
                             <FormHelperText>Must Be After The Start Time In Your Day (Your Sleep and Wake times)</FormHelperText>
+                            {modalEndOutOfBoundsError && <FormErrorMessage>End Time Must Be Before Sleep Time</FormErrorMessage>}
                         </FormControl>
                     </Flex>
-
                     <Flex direction="column">
-                        <Heading size="md">Pick a Color</Heading>
-                        <ColorPicker width={228} height={114} color={color} onChange={setColor} hideHSV hideHEX />
+                        <FormControl>
+                            <FormLabel>Choose a Background Color for the Task</FormLabel>
+                            <RadioGroup onChange={(e : any)=>{setColor(e)}} value={color} mt="5px">
+                            <Flex direction='row' gap="10px">
+                                <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                            </Flex>
+                        </RadioGroup>
+                        </FormControl>
                     </Flex>
                 </Flex>
             </ModalBody>
             <ModalFooter gap="20px">
-                <Button colorScheme='red' onClick={onClose}>
+                <Button colorScheme='red' onClick={closeModal}>
                     Cancel
                 </Button>
                 <Button colorScheme='blue' onClick={()=>{addTaskManually()}}>

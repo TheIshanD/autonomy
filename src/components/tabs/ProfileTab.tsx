@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Divider
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Divider, RadioGroup, Radio
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
@@ -54,7 +54,19 @@ export default function ProfileTab(props : any) {
 
     const addRoutine = ()=>{
         const tmpRoutineList = [...routineList];
-        tmpRoutineList.push({title: "Work", start: 16, end: 32, active: true, isConflicting: ""})
+        tmpRoutineList.push({title: "Routine #" + (tmpRoutineList.length + 1), start: 0, end: 46, active: true, isConflicting: "", color: "#FFD580"})
+        setRoutineList(tmpRoutineList)
+    }
+
+    const OnRoutineTitleChange = (e : any, routineInd : number)=>{
+        const tmpRoutineList = [...routineList];
+        tmpRoutineList[routineInd].title = e.target.value;
+        setRoutineList(tmpRoutineList)
+    }
+
+    const OnRoutineColorChange = (e : any, routineInd : number)=>{
+        const tmpRoutineList = [...routineList];
+        tmpRoutineList[routineInd].color = e;
         setRoutineList(tmpRoutineList)
     }
 
@@ -106,7 +118,7 @@ export default function ProfileTab(props : any) {
                         <Flex key={routineInd} direction="row" gap="3px" align="end">
                             <FormControl isRequired>
                                 <FormLabel>What do you want to call this Routine?</FormLabel>
-                                <Input bg={routine.active?"white":"whitesmoke"} placeholder={"Routine Title"} defaultValue={routine.title}/>
+                                <Input bg={routine.active?"white":"whitesmoke"} placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>When do you want to start this Routine?</FormLabel>
@@ -152,6 +164,16 @@ export default function ProfileTab(props : any) {
                             {!routine.active && <Button colorScheme='green' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Turn On</Button>}
                             <Button colorScheme='red' minW="150px" onClick={()=>{deleteRoutine(routineInd)}}>Delete Routine</Button>
                         </Flex>
+                        <RadioGroup onChange={(e)=>{OnRoutineColorChange(e, routineInd)}} value={routine.color} mt="5px">
+                            <Flex direction='row' gap="10px">
+                                <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
+                                <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                            </Flex>
+                        </RadioGroup>
                     </Flex>
                 );
             })
