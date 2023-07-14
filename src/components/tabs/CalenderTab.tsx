@@ -6,7 +6,7 @@ import "react-color-palette/lib/css/styles.css";
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage, BreadcrumbLink
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
@@ -15,7 +15,7 @@ import { ColorPicker, useColor } from 'react-color-palette'
 import { FaWindowClose, FaPlusSquare, FaCalendarPlus } from "react-icons/fa";
 
 export default function CalenderTab(props : any) {
-    const {schedule, setSchedule, sleepTime, wakeTime, goals} = props;
+    const {schedule, setSchedule, sleepTime, wakeTime} = props;
 
     const [taskInput, setTaskInput] = React.useState("");
     const [tasks, setTasks] = React.useState([""]);
@@ -48,33 +48,61 @@ export default function CalenderTab(props : any) {
         return tmpArr;
     }
 
+    const toAbsoluteTime =(time : number)=>{
+        var curr = time;
+        curr += wakeTime
+        curr %= 48;
+        return curr;
+    }
+
     const addTaskManually = ()=>{
-        if(modalTaskInput=="") {
+        if(wakeTime < sleepTime && (toAbsoluteTime(modalTaskIndex) < wakeTime || toAbsoluteTime(modalTaskIndex) > sleepTime)) {
+            console.log("start time is out of bounds")
+        } else if (wakeTime > sleepTime && toAbsoluteTime(modalTaskIndex) > sleepTime && toAbsoluteTime(modalTaskIndex) < wakeTime) {
+            console.log("start time is out of bounds")
+        } else if(wakeTime < sleepTime && (toAbsoluteTime(modalTaskIndexEnd) < wakeTime || toAbsoluteTime(modalTaskIndexEnd) > sleepTime)) {
+            console.log("end time is out of bounds")
+        } else if (wakeTime > sleepTime && toAbsoluteTime(modalTaskIndexEnd) > sleepTime && toAbsoluteTime(modalTaskIndexEnd) < wakeTime) {
+            console.log("end time is out of bounds")
+        } else if(modalTaskInput=="") {
             setHasManualTaskAddTitleError(true);
         } else if (modalTaskIndex >= modalTaskIndexEnd) {
             setHasManualTaskAddTimeError(true);
         } else {
-            const tempSchedule = [...schedule];
-    
-            var curr = modalTaskIndex;
-    
-            var isFirstIteration = true;
-    
-            while(curr != modalTaskIndexEnd) {
-                tempSchedule[curr + wakeTime].activity = modalTaskInput;
-                tempSchedule[curr + wakeTime].color = color.hex;
-                tempSchedule[curr + wakeTime].isContinuation = !isFirstIteration;
-    
-                curr += 1;
-                curr %= 48;
-    
-                isFirstIteration = false;
+            var start = modalTaskIndex;
+            var hasTaskInBetween = false;
+            while(start != modalTaskIndexEnd) {
+                if(schedule[toAbsoluteTime(start)].activity != "[EMPTY]") {
+                    hasTaskInBetween = true;
+                    break;
+                }
+
+                start += 1;
+                start %= 48;
             }
-            setSchedule(tempSchedule)
-            setModalTaskInput("");
-            setHasManualTaskAddTitleError(false)
-            setHasManualTaskAddTimeError(false);
-            onClose();
+            if(hasTaskInBetween) {
+                console.log("There is already a task where you want to schedule your task")
+            } else {
+                const tempSchedule = [...schedule];
+                var curr = modalTaskIndex;
+                var isFirstIteration = true;
+                while(curr != modalTaskIndexEnd) {
+                    tempSchedule[(curr + wakeTime)%48].activity = modalTaskInput;
+                    tempSchedule[(curr + wakeTime)%48].color = color.hex;
+                    tempSchedule[(curr + wakeTime)%48].isContinuation = !isFirstIteration;
+        
+                    curr += 1;
+                    curr %= 48;
+        
+                    isFirstIteration = false;
+                }
+    
+                setSchedule(tempSchedule)
+                setModalTaskInput("");
+                setHasManualTaskAddTitleError(false)
+                setHasManualTaskAddTimeError(false);
+                onClose();
+            }
         }
     }
 
@@ -128,7 +156,7 @@ export default function CalenderTab(props : any) {
                                 <Flex direction="row" width="90%" height="100%">
                                     <Divider width="10%" m={0}/>
 
-                                    <Flex direction="row" bg={color.hex} width="80%" justify="center" align="center" px="20px" borderTop={slot.isContinuation?"":"2px solid"} borderColor="black">
+                                    <Flex direction="row" bg={slot.color} width="80%" justify="center" align="center" px="20px" borderTop={slot.isContinuation?"":"4px solid"} borderColor="black">
                                         <Flex direction="row" width="100%" justify="center" align="baseline" hidden={slot.isContinuation}>
                                             <Heading size="md" mr="5px">{slot.activity}</Heading>
                                             <Text fontSize="sm">{slot.start}</Text>
