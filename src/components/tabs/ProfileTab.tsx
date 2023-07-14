@@ -10,6 +10,7 @@ import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 
 
+
 export default function ProfileTab(props : any) {
     const {schedule, setSchedule, sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals} = props;
 

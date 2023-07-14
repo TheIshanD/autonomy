@@ -6,21 +6,22 @@ import "react-color-palette/lib/css/styles.css";
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 import { ColorPicker, useColor } from 'react-color-palette'
 
-import { FaWindowClose } from "react-icons/fa";
-
-
+import { FaWindowClose, FaPlusSquare, FaCalendarPlus } from "react-icons/fa";
 
 export default function CalenderTab(props : any) {
     const {schedule, setSchedule, sleepTime, wakeTime, goals} = props;
 
     const [taskInput, setTaskInput] = React.useState("");
     const [tasks, setTasks] = React.useState([""]);
+
+    const [hasManualTaskAddTitleError, setHasManualTaskAddTitleError] = React.useState(false)
+    const [hasManualTaskAddTimeError, setHasManualTaskAddTimeError] = React.useState(false);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -48,9 +49,13 @@ export default function CalenderTab(props : any) {
     }
 
     const addTaskManually = ()=>{
-        if(modalTaskIndex < modalTaskIndexEnd && modalTaskInput != "") {
+        if(modalTaskInput=="") {
+            setHasManualTaskAddTitleError(true);
+        } else if (modalTaskIndex >= modalTaskIndexEnd) {
+            setHasManualTaskAddTimeError(true);
+        } else {
             const tempSchedule = [...schedule];
-
+    
             var curr = modalTaskIndex;
     
             var isFirstIteration = true;
@@ -67,9 +72,12 @@ export default function CalenderTab(props : any) {
             }
             setSchedule(tempSchedule)
             setModalTaskInput("");
+            setHasManualTaskAddTitleError(false)
+            setHasManualTaskAddTimeError(false);
             onClose();
         }
     }
+
 
     const removeActivity = (key : number)=>{
         const tempSchedule = [...schedule];
@@ -111,7 +119,7 @@ export default function CalenderTab(props : any) {
                                     <Divider m={0}/>
 
                                     <Flex onClick={()=>{setModalTaskIndex(key);setModalTaskIndexEnd((key + 1)%48);onOpen()}} opacity="0" width="80%" height="100%" justify="center" align="center" _hover={{background: "brand.400", opacity: "1"}}>
-                                        +
+                                        <Icon as={FaPlusSquare} boxSize="50%"/>
                                     </Flex>
 
                                 </Flex>
@@ -120,9 +128,10 @@ export default function CalenderTab(props : any) {
                                 <Flex direction="row" width="90%" height="100%">
                                     <Divider width="10%" m={0}/>
 
-                                    <Flex direction="row" bg={slot.color} width="80%" justify="center" align="center" px="20px">
-                                        <Flex direction="row" width="100%" justify="center" align="center" hidden={slot.isContinuation}>
-                                            <Heading size="md">{slot.activity}</Heading>
+                                    <Flex direction="row" bg={color.hex} width="80%" justify="center" align="center" px="20px" borderTop={slot.isContinuation?"":"2px solid"} borderColor="black">
+                                        <Flex direction="row" width="100%" justify="center" align="baseline" hidden={slot.isContinuation}>
+                                            <Heading size="md" mr="5px">{slot.activity}</Heading>
+                                            <Text fontSize="sm">{slot.start}</Text>
                                             <Spacer />
                                             <IconButton
                                                 colorScheme='red'
@@ -176,16 +185,15 @@ export default function CalenderTab(props : any) {
             <ModalCloseButton />
             <ModalBody>
                 <Flex direction="column" width="100%" gap="30px">
-                    <FormControl>
+                    <FormControl isInvalid={hasManualTaskAddTitleError}>
                         <FormLabel>Task Title</FormLabel>
-                        <Flex direction="row">
                         <Input bg="white" value={modalTaskInput} onChange={(e)=>{setModalTaskInput(e.target.value)}} placeholder='Do Something' type="text"/>
-                        </Flex>
+                        <FormErrorMessage>Must Include Some Text</FormErrorMessage>
                         <FormHelperText>Describe The Task</FormHelperText>
                     </FormControl>
 
                     <Flex direction="row" gap="20px">
-                        <FormControl isRequired>
+                        <FormControl isRequired isInvalid={hasManualTaskAddTimeError}>
                             <FormLabel>Task Start Time</FormLabel>
                             <Select value={(modalTaskIndex + wakeTime)%48} onChange={(e)=>{onChangeStartTask(e)}} bg="white">
                                 <chakra.option value={0}>12:00 AM</chakra.option>
@@ -237,9 +245,10 @@ export default function CalenderTab(props : any) {
                                 <chakra.option value={46}>11:00 PM</chakra.option>
                                 <chakra.option value={47}>11:30 PM</chakra.option>
                             </Select>
+                            <FormErrorMessage>Start Time Must Be Before End Time</FormErrorMessage>
                         </FormControl>
 
-                        <FormControl isRequired>
+                        <FormControl isRequired isInvalid={hasManualTaskAddTimeError}>
                             <FormLabel>Task End Time</FormLabel>
                             <Select value={(modalTaskIndexEnd + wakeTime)%48} onChange={(e)=>{onChangeEndTask(e)}} bg="white">
                                 <chakra.option value={0}>12:00 AM</chakra.option>
