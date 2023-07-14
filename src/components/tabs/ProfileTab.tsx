@@ -99,7 +99,7 @@ export default function ProfileTab(props : any) {
             <Flex direction="column" gap="60px"> 
             {routineList.map((routine : any, routineInd : number)=>{
                 return (
-                    <Flex direction="column">
+                    <Flex key={routineInd} direction="column">
                         {routine.isConflicting &&
                             <Text fontWeight="900">This routine cannot be active because it conflicts with {routine.isConflicting}</Text>
                         }
