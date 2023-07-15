@@ -5,7 +5,7 @@ import { FaRobot, FaRegCalendarAlt, FaListAlt, FaSmile } from "react-icons/fa";
 export default function Header(props : any) {
 
     return (
-    <Flex bg="lightgray" direction="row" minW="100%" gap="30px">
+    <Flex bg="#002B5B" direction="row" minW="100%" gap="30px" color="white">
         <Flex direction="row" align="center" justify="center" p="5px" gap="10px">
             <Icon as={FaRobot} boxSize="30px"/>
             <Heading fontWeight="900" fontSize="xl">Autonomy AI</Heading>

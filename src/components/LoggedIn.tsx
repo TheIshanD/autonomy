@@ -14,61 +14,67 @@ import CalenderTab from './tabs/CalenderTab'
 export default function LoggedIn() {
     const [pageIndex, setPageIndex] = React.useState(0);
     const [schedule, setSchedule] = React.useState([
-        {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"1:30am", end:"2:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"2:00am", end:"2:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"2:30am", end:"3:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"3:00am", end:"3:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"3:30am", end:"4:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"4:00am", end:"4:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"4:30am", end:"5:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"5:00am", end:"5:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"5:30am", end:"6:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"6:00am", end:"6:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"6:30am", end:"7:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"7:00am", end:"7:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"7:30am", end:"8:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"8:00am", end:"8:30am", activity: "Wake Up", color: "#ADD8E6", isContinuation: false},
-        {start:"8:30am", end:"9:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"9:00am", end:"9:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"9:30am", end:"10:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"10:00am", end:"10:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"10:30am", end:"11:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"11:00am", end:"11:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"11:30am", end:"12:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"12:00pm", end:"12:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"12:30pm", end:"1:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"1:00pm", end:"1:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"1:30pm", end:"2:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"2:00pm", end:"2:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"2:30pm", end:"3:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"3:00pm", end:"3:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"3:30pm", end:"4:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"4:00pm", end:"4:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"4:30pm", end:"5:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"5:00pm", end:"5:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"5:30pm", end:"6:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"6:00pm", end:"6:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"6:30pm", end:"7:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"7:00pm", end:"7:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"7:30pm", end:"8:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"8:00pm", end:"8:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"8:30pm", end:"9:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"9:00pm", end:"9:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"9:30pm", end:"10:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"10:00pm", end:"10:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"10:30pm", end:"11:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"11:00pm", end:"11:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"11:30pm", end:"12:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-        {start:"12:00am", end:"12:30am", activity: "Sleep", color: "#ADD8E6", isContinuation: false},
-        {start:"12:30am", end:"1:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
+        {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"1:30am", end:"2:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"2:00am", end:"2:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"2:30am", end:"3:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"3:00am", end:"3:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"3:30am", end:"4:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"4:00am", end:"4:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"4:30am", end:"5:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"5:00am", end:"5:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"5:30am", end:"6:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"6:00am", end:"6:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"6:30am", end:"7:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"7:00am", end:"7:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"7:30am", end:"8:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"8:00am", end:"8:30am", activity: "Wake Up", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"8:30am", end:"9:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"9:00am", end:"9:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"9:30am", end:"10:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"10:00am", end:"10:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"10:30am", end:"11:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"11:00am", end:"11:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"11:30am", end:"12:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"12:00pm", end:"12:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"12:30pm", end:"1:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"1:00pm", end:"1:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"1:30pm", end:"2:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"2:00pm", end:"2:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"2:30pm", end:"3:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"3:00pm", end:"3:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"3:30pm", end:"4:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"4:00pm", end:"4:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"4:30pm", end:"5:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"5:00pm", end:"5:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"5:30pm", end:"6:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"6:00pm", end:"6:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"6:30pm", end:"7:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"7:00pm", end:"7:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"7:30pm", end:"8:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"8:00pm", end:"8:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"8:30pm", end:"9:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"9:00pm", end:"9:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"9:30pm", end:"10:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"10:00pm", end:"10:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"10:30pm", end:"11:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"11:00pm", end:"11:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"11:30pm", end:"12:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"12:00am", end:"12:30am", activity: "Sleep", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"12:30am", end:"1:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
     ]);
     const [sleepTime, setSleepTime] = React.useState(46);
     const [wakeTime, setWakeTime] = React.useState(14);
-    const [goals, setGoals] = React.useState([""]);
+    const [goals, setGoals] = React.useState<string[]>([]);
     const [routineList, setRoutineList] = React.useState([
         // {title: "Work", start: 16, end: 32, active: true, isConflicting: "", color: "#FFD580"}
     ]);
+
+    const [scheduleRegenTrigger,setScheduleRegenTrigger] = React.useState(false)
+
+    const recomputeSchedule = ()=>{
+        setScheduleRegenTrigger(!scheduleRegenTrigger)
+    }
 
     const timeList = [
     "1:00am",
@@ -121,117 +127,108 @@ export default function LoggedIn() {
     "12:30am",
     ]
 
-    const applyRoutinesToSchedule = ()=>{
-        console.log("applying routines...")
-    }
-
-    var regenerateSchedule = true;
-
     useEffect(()=>{
-        if(regenerateSchedule) {
-            const tmpSchedule = [
-                {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"1:30am", end:"2:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"2:00am", end:"2:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"2:30am", end:"3:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"3:00am", end:"3:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"3:30am", end:"4:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"4:00am", end:"4:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"4:30am", end:"5:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"5:00am", end:"5:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"5:30am", end:"6:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"6:00am", end:"6:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"6:30am", end:"7:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"7:00am", end:"7:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"7:30am", end:"8:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"8:00am", end:"8:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"8:30am", end:"9:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"9:00am", end:"9:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"9:30am", end:"10:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"10:00am", end:"10:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"10:30am", end:"11:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"11:00am", end:"11:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"11:30am", end:"12:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"12:00pm", end:"12:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"12:30pm", end:"1:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"1:00pm", end:"1:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"1:30pm", end:"2:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"2:00pm", end:"2:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"2:30pm", end:"3:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"3:00pm", end:"3:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"3:30pm", end:"4:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"4:00pm", end:"4:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"4:30pm", end:"5:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"5:00pm", end:"5:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"5:30pm", end:"6:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"6:00pm", end:"6:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"6:30pm", end:"7:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"7:00pm", end:"7:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"7:30pm", end:"8:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"8:00pm", end:"8:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"8:30pm", end:"9:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"9:00pm", end:"9:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"9:30pm", end:"10:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"10:00pm", end:"10:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"10:30pm", end:"11:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"11:00pm", end:"11:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"11:30pm", end:"12:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"12:00am", end:"12:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-                {start:"12:30am", end:"1:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false},
-            ];
-            tmpSchedule[wakeTime].activity = "Wake Up"
+        const tmpSchedule = [
+            {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"1:30am", end:"2:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"2:00am", end:"2:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"2:30am", end:"3:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"3:00am", end:"3:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"3:30am", end:"4:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"4:00am", end:"4:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"4:30am", end:"5:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"5:00am", end:"5:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"5:30am", end:"6:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"6:00am", end:"6:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"6:30am", end:"7:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"7:00am", end:"7:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"7:30am", end:"8:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"8:00am", end:"8:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"8:30am", end:"9:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"9:00am", end:"9:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"9:30am", end:"10:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"10:00am", end:"10:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"10:30am", end:"11:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"11:00am", end:"11:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"11:30am", end:"12:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"12:00pm", end:"12:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"12:30pm", end:"1:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"1:00pm", end:"1:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"1:30pm", end:"2:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"2:00pm", end:"2:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"2:30pm", end:"3:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"3:00pm", end:"3:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"3:30pm", end:"4:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"4:00pm", end:"4:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"4:30pm", end:"5:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"5:00pm", end:"5:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"5:30pm", end:"6:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"6:00pm", end:"6:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"6:30pm", end:"7:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"7:00pm", end:"7:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"7:30pm", end:"8:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"8:00pm", end:"8:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"8:30pm", end:"9:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"9:00pm", end:"9:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"9:30pm", end:"10:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"10:00pm", end:"10:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"10:30pm", end:"11:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"11:00pm", end:"11:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"11:30pm", end:"12:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"12:00am", end:"12:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+            {start:"12:30am", end:"1:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        ];
+        tmpSchedule[wakeTime].activity = "Wake Up"
 
-            tmpSchedule[sleepTime].activity = "Sleep"
+        tmpSchedule[sleepTime].activity = "Sleep"
 
-            routineList.map((routine : any, routineInd : number)=>{
-                var tmpStart = routine.start;
-                const tmpEnd = routine.end;
+        routineList.map((routine : any, routineInd : number)=>{
+            var tmpStart = routine.start;
+            const tmpEnd = routine.end;
 
-                var routineConflicts = false;
+            var routineConflicts = false;
 
-                while(tmpStart != tmpEnd) {
-                    if(tmpSchedule[tmpStart].activity != "[EMPTY]") {
-                        routine.isConflicting = tmpSchedule[tmpStart].activity
-                        routine.active = false;
-                        routineConflicts = true;
-                        break;
-                    }
-
-                    tmpStart++;
-                    tmpStart %= 48;
+            while(tmpStart != tmpEnd) {
+                if(tmpSchedule[tmpStart].activity != "[EMPTY]") {
+                    routine.isConflicting = tmpSchedule[tmpStart].activity
+                    routine.active = false;
+                    routineConflicts = true;
+                    break;
                 }
 
-                if(!routineConflicts) {
-                    routine.isConflicting = "";
+                tmpStart++;
+                tmpStart %= 48;
+            }
 
-                    if(routine.active) {
-                        var start = routine.start;
-                        const end = routine.end;
-        
-                        var isFirstIteration = true;
-                        while(start != end) {
-                            tmpSchedule[start].activity = routine.title
-                            tmpSchedule[start].isContinuation = !isFirstIteration;
-                            tmpSchedule[start].color = routine.color;
-        
-                            start++;
-                            start %= 48;
-                            isFirstIteration = false;
-                        }
+            if(!routineConflicts) {
+                routine.isConflicting = "";
+
+                if(routine.active) {
+                    var start = routine.start;
+                    const end = routine.end;
+    
+                    var isFirstIteration = true;
+                    while(start != end) {
+                        tmpSchedule[start].activity = routine.title
+                        tmpSchedule[start].isContinuation = !isFirstIteration;
+                        tmpSchedule[start].color = routine.color;
+    
+                        start++;
+                        start %= 48;
+                        isFirstIteration = false;
                     }
                 }
-            })
+            }
+        })
 
-            setSchedule(tmpSchedule)
-        }
-        regenerateSchedule = true;
-    },[wakeTime, sleepTime, routineList])
+        setSchedule(tmpSchedule)
+    },[scheduleRegenTrigger])
 
     return (
-        <Box width="100%" height="100%" bg="whitesmoke">
+        <Box width="100%" height="100%" bg="#E4DCCF">
             <Header/>
 
-            <Flex direction="row" width="100%" minH="100vh">
+            <Flex direction={["column","column","row","row"]} width="100%" minH="100vh">
                 <SideNav pageIndex={pageIndex} setPageIndex={setPageIndex}/> 
 
                 {pageIndex==0 &&
@@ -247,8 +244,7 @@ export default function LoggedIn() {
                         timeList={timeList}
                         routineList={routineList}
                         setRoutineList={setRoutineList}
-                        applyRoutinesToSchedule={applyRoutinesToSchedule}
-                        regenerateSchedule={regenerateSchedule}
+                        recomputeSchedule={recomputeSchedule}
                     />
                 }
 
@@ -262,6 +258,8 @@ export default function LoggedIn() {
                         setWakeTime={setWakeTime}
                         goals={goals}
                         setGoals={setGoals}
+                        timeList={timeList}
+                        recomputeSchedule={recomputeSchedule}
                     />
                 }
                 

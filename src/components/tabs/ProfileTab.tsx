@@ -11,16 +11,18 @@ import Header from '@/components/Header'
 
 
 export default function ProfileTab(props : any) {
-    const {schedule, setSchedule, sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals, timeList, routineList, setRoutineList, applyRoutinesToSchedule} = props;
+    const {schedule, setSchedule, sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals, timeList, routineList, setRoutineList, recomputeSchedule} = props;
 
     const [goalInput, setGoalInput] = React.useState("");
     
     const OnChangeSleepSelect = (e : any)=>{
         setSleepTime(parseInt(e.target.value))
+        recomputeSchedule()
     }
     
     const OnChangeWakeUpSelect = (e : any)=>{
         setWakeTime(parseInt(e.target.value));
+        recomputeSchedule()
     }
 
     const OnChangeRoutineStartTime = (e : any, routineInd : number) => {
@@ -29,6 +31,7 @@ export default function ProfileTab(props : any) {
 
         tmpRoutineList[routineInd].start = newVal;
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     const OnChangeRoutineEndTime = (e : any, routineInd : number) => {
@@ -37,85 +40,90 @@ export default function ProfileTab(props : any) {
 
         tmpRoutineList[routineInd].end = newVal;
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     const toggleRoutine = (routineInd : number)=>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].active = !tmpRoutineList[routineInd].active;
         setRoutineList(tmpRoutineList)
-        
+        recomputeSchedule()
     }
 
     const deleteRoutine = (routineInd : number)=>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList.splice(routineInd, 1);
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     const addRoutine = ()=>{
         const tmpRoutineList = [...routineList];
-        tmpRoutineList.push({title: "Routine #" + (tmpRoutineList.length + 1), start: 0, end: 46, active: true, isConflicting: "", color: "#FFD580"})
+        tmpRoutineList.push({title: "Routine #" + (tmpRoutineList.length + 1), start: wakeTime + 1, end: sleepTime, active: true, isConflicting: "", color: "#FFD580"})
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     const OnRoutineTitleChange = (e : any, routineInd : number)=>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].title = e.target.value;
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     const OnRoutineColorChange = (e : any, routineInd : number)=>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].color = e;
         setRoutineList(tmpRoutineList)
+        recomputeSchedule()
     }
 
     return (
-    <Flex bg="whitesmoke" direction="column" p="30px" gap=" 30px" width="80%">
-        <Flex direction="column">
+    <Flex direction="column" p="30px" gap="10px" width="100%">
+        <Flex direction="column" mb="20px">
             <Heading size="2xl">Profile</Heading>
             <Text>Changing your profile will automatically reset your existing tasks</Text>
         </Flex>
 
         <Heading size="lg">Wake and Sleep Times</Heading>
-        <FormControl isRequired>
-            <FormLabel>When do you wake up?</FormLabel>
-            <Select value={wakeTime} onChange={(e)=>{OnChangeWakeUpSelect(e)}} bg="white">
-                {timeList.map((timeString : string, index : number)=>{
-                    return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                })}
-            </Select>
-        </FormControl>
+        <Flex direction="column" gap="20px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
+            <FormControl isRequired>
+                <FormLabel>When do you wake up?</FormLabel>
+                <Select value={wakeTime} onChange={(e)=>{OnChangeWakeUpSelect(e)}} bg="white">
+                    {timeList.map((timeString : string, index : number)=>{
+                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                    })}
+                </Select>
+            </FormControl>
 
-        <FormControl isRequired>
-            <FormLabel>When do you go to sleep?</FormLabel>
-            <Select value={sleepTime} onChange={(e)=>{OnChangeSleepSelect(e)}} bg="white">
-                {timeList.map((timeString : string, index : number)=>{
-                    return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                })}
-            </Select>
-        </FormControl>
+            <FormControl isRequired>
+                <FormLabel>When do you go to sleep?</FormLabel>
+                <Select value={sleepTime} onChange={(e)=>{OnChangeSleepSelect(e)}} bg="white">
+                    {timeList.map((timeString : string, index : number)=>{
+                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                    })}
+                </Select>
+            </FormControl>
+        </Flex>
 
-        <Divider />
-
-        <Flex direction="column" gap="30px" mt="10px">
-            <Flex direction="row" align="end" gap="30px">
+        <Flex direction={["column","column","column","row"]} align={["start","start","start","end"]} gap="30px">
                 <Flex direction="column">
                     <Heading size="lg">Routines</Heading>
-                    <Text>Schedule Reoccurring Events</Text>
+                    <Text>Schedule Reoccurring Daily Events</Text>
                 </Flex>
-                <Button colorScheme='yellow' onClick={addRoutine}>
-                    Add New Routine
-                </Button>
-            </Flex>
-            <Flex direction="column" gap="60px"> 
+        </Flex>
+        <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
+            <Button colorScheme='yellow' onClick={addRoutine}>
+                Add New Routine
+            </Button>
+            <Flex direction="column" gap="30px"> 
             {routineList.map((routine : any, routineInd : number)=>{
                 return (
-                    <Flex key={routineInd} direction="column">
+                    <Flex key={routineInd} direction="column" border="4px solid" borderColor="black" p="20px" bg="#E4DCCF">
                         {routine.isConflicting &&
                             <Text fontWeight="900">This routine cannot be active because it conflicts with {routine.isConflicting}</Text>
                         }
-                        <Flex key={routineInd} direction="row" gap="3px" align="end">
+                        <Flex key={routineInd} direction={["column","column","column","row"]} gap="3px" align={["start","start","start","end"]}>
                             <FormControl isRequired>
                                 <FormLabel>What do you want to call this Routine?</FormLabel>
                                 <Input bg={routine.active?"white":"whitesmoke"} placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
@@ -181,11 +189,9 @@ export default function ProfileTab(props : any) {
             </Flex>
         </Flex>
 
-        <Divider />
-
-        <Flex direction="column" gap="30px" mt="10px">
-            <Flex direction="row" align="center" gap="30px">
-                <Heading size="lg">Goals</Heading>
+        <Heading size="lg">Goals</Heading>
+        <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
+            <Flex direction={["column","column","column","row"]} align={["start","start","start","center"]} gap="30px">
                 <FormControl>
                     <FormLabel>Add any long term habits you want to form or goals that you have</FormLabel>
                     <Flex direction="row">
@@ -201,7 +207,7 @@ export default function ProfileTab(props : any) {
             <Flex direction="column" gap="3px"> 
                 {
                     goals.map((goal : string, index : number)=>{
-                    return (index==0?null:<Text key={index}>{index+". "+goal}</Text>)
+                        return (<Text key={index}>{(index + 1)+". "+goal}</Text>)
                     })
                 }
             </Flex>
