@@ -259,7 +259,7 @@ export default function CalenderTab(props : any) {
                         {
                         tasks.map((task, key)=>{
                             return (
-                                <Flex direction="column" bg="#F9F5EB" p="10px" border="4px solid" borderColor="black" align="right">
+                                <Flex key={key} direction="column" bg="#F9F5EB" p="10px" border="4px solid" borderColor="black" align="right">
                                     <Flex direction="row" justify={"end"} mb="10px">
                                         <IconButton
                                             colorScheme='red'
