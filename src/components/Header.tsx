@@ -16,7 +16,6 @@ export default function Header(props : any) {
         <Button colorScheme="orange" m="10px">
             Log Out
         </Button>
-    
     </Flex>
     )
 }

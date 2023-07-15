@@ -4,16 +4,18 @@ import React, { useEffect } from 'react'
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Divider, RadioGroup, Radio
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Divider, RadioGroup, Radio, ScaleFade, Tooltip, Icon, IconButton, FormErrorMessage
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
+import { FaWindowClose } from 'react-icons/fa'
 
 
 export default function ProfileTab(props : any) {
     const {schedule, setSchedule, sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals, timeList, routineList, setRoutineList, recomputeSchedule} = props;
 
     const [goalInput, setGoalInput] = React.useState("");
+    const [goalInputError, setGoalInputError] = React.useState(false);
     
     const OnChangeSleepSelect = (e : any)=>{
         setSleepTime(parseInt(e.target.value))
@@ -78,6 +80,12 @@ export default function ProfileTab(props : any) {
         recomputeSchedule()
     }
 
+    const removeGoal = (goalInd : number) => {
+        const tmpGoalList = [...goals]
+        tmpGoalList.splice(goalInd, 1);
+        setGoals(tmpGoalList);
+    }
+
     return (
     <Flex direction="column" p="30px" gap="10px" width="100%">
         <Flex direction="column" mb="20px">
@@ -109,7 +117,7 @@ export default function ProfileTab(props : any) {
         <Flex direction={["column","column","column","row"]} align={["start","start","start","end"]} gap="30px">
                 <Flex direction="column">
                     <Heading size="lg">Routines</Heading>
-                    <Text>Schedule Reoccurring Daily Events</Text>
+                    <Text>Schedule Reoccurring Daily Events (Same Time Each Day)</Text>
                 </Flex>
         </Flex>
         <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
@@ -119,84 +127,116 @@ export default function ProfileTab(props : any) {
             <Flex direction="column" gap="30px"> 
             {routineList.map((routine : any, routineInd : number)=>{
                 return (
-                    <Flex key={routineInd} direction="column" border="4px solid" borderColor="black" p="20px" bg="#E4DCCF">
-                        {routine.isConflicting &&
-                            <Text fontWeight="900">This routine cannot be active because it conflicts with {routine.isConflicting}</Text>
-                        }
-                        <Flex key={routineInd} direction={["column","column","column","row"]} gap="3px" align={["start","start","start","end"]}>
-                            <FormControl isRequired>
-                                <FormLabel>What do you want to call this Routine?</FormLabel>
-                                <Input bg={routine.active?"white":"whitesmoke"} placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormLabel>When do you want to start this Routine?</FormLabel>
-                                <Select bg={routine.active?"white":"whitesmoke"} value={routine.start} onChange={(e)=>{OnChangeRoutineStartTime(e, routineInd)}}>
-                                {timeList.map((timeString : string, index : number)=>{
-                                    if(wakeTime < sleepTime) {
-                                        if(index >= wakeTime && index <= sleepTime && index < routine.end) {
-                                            return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                                        } else {
-                                            return null
-                                        }
-                                    } else if (wakeTime > sleepTime) {
-                                        if(index < wakeTime && index > sleepTime) {
-                                            return null
-                                        } else {
-                                            return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                                        }
+                    <Box key={routineInd}>
+                        <ScaleFade initialScale={0.7} in={true}>
+                            <Flex direction="column" border="4px solid" borderColor="black" p="20px" bg="#E4DCCF" align="end">
+                                <Flex direction="row" width="100%">
+                                    <Flex direction="row" width="50%" justify="start">
+                                    {routine.isConflicting &&
+                                        <Text fontWeight="900" color="red.600">This routine cannot be active because it conflicts with {routine.isConflicting}</Text>
                                     }
-                                })}
-                                </Select>
-                            </FormControl>  
-                            <FormControl isRequired>
-                                <FormLabel>When do you want to end this Routine?</FormLabel>
-                                <Select bg={routine.active?"white":"whitesmoke"} value={routine.end} onChange={(e)=>{OnChangeRoutineEndTime(e, routineInd)}}>
-                                {timeList.map((timeString : string, index : number)=>{
-                                    if(wakeTime < sleepTime) {
-                                        if(index >= wakeTime && index <= sleepTime && index > routine.start) {
-                                            return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                                        } else {
-                                            return null
-                                        }
-                                    } else if (wakeTime > sleepTime) {
-                                        if((index < wakeTime && index > sleepTime)) {
-                                            return null
-                                        } else {
-                                            return <chakra.option value={index} key={index}>{timeString}</chakra.option>
-                                        }
-                                    }
-                                })}
-                                </Select>
-                            </FormControl>
-                            {routine.active && <Button colorScheme='red' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Turn Off</Button>}
-                            {!routine.active && <Button colorScheme='green' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Turn On</Button>}
-                            <Button colorScheme='red' minW="150px" onClick={()=>{deleteRoutine(routineInd)}}>Delete Routine</Button>
-                        </Flex>
-                        <RadioGroup onChange={(e)=>{OnRoutineColorChange(e, routineInd)}} value={routine.color} mt="5px">
-                            <Flex direction='row' gap="10px">
-                                <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
-                                <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
-                                <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
-                                <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
-                                <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
-                                <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                                    </Flex>
+                                    <Flex direction="row" width="50%" justify="end">
+                                        <Tooltip hasArrow label='Delete Routine' bg='red.600' placement='top'>
+                                            <IconButton
+                                                colorScheme='red'
+                                                aria-label='delete'
+                                                maxW="10px"
+                                                size="xs"
+                                                onClick={()=>{deleteRoutine(routineInd)}}
+                                                icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
+                                            />
+                                        </Tooltip>
+                                    </Flex>
+                                </Flex>
+                                <Flex direction="column" align="start" minW="100%">
+                                    <Flex direction={["column","column","column","row"]} gap="3px" align={["start","start","start","end"]} width="100%">
+                                        <FormControl isRequired>
+                                            <FormLabel>Routine Title?</FormLabel>
+                                            <Input bg={routine.active?"white":"lightgray"} placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
+                                        </FormControl>
+                                        <FormControl isRequired>
+                                            <FormLabel>Routine Start Time?</FormLabel>
+                                            <Select bg={routine.active?"white":"lightgray"} value={routine.start} onChange={(e)=>{OnChangeRoutineStartTime(e, routineInd)}}>
+                                            {timeList.map((timeString : string, index : number)=>{
+                                                if(wakeTime < sleepTime) {
+                                                    if(index >= wakeTime && index <= sleepTime && index < routine.end) {
+                                                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                                                    } else {
+                                                        return null
+                                                    }
+                                                } else if (wakeTime > sleepTime) {
+                                                    if(index < wakeTime && index > sleepTime) {
+                                                        return null
+                                                    } else {
+                                                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                                                    }
+                                                }
+                                            })}
+                                            </Select>
+                                        </FormControl>  
+                                        <FormControl isRequired>
+                                            <FormLabel>Routine End Time?</FormLabel>
+                                            <Select bg={routine.active?"white":"lightgray"} value={routine.end} onChange={(e)=>{OnChangeRoutineEndTime(e, routineInd)}}>
+                                            {timeList.map((timeString : string, index : number)=>{
+                                                if(wakeTime < sleepTime) {
+                                                    if(index >= wakeTime && index <= sleepTime && index > routine.start) {
+                                                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                                                    } else {
+                                                        return null
+                                                    }
+                                                } else if (wakeTime > sleepTime) {
+                                                    if((index < wakeTime && index > sleepTime)) {
+                                                        return null
+                                                    } else {
+                                                        return <chakra.option value={index} key={index}>{timeString}</chakra.option>
+                                                    }
+                                                }
+                                            })}
+                                            </Select>
+                                        </FormControl>
+                                        {routine.active && <Button colorScheme='red' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Deactivate</Button>}
+                                        {!routine.active && <Button colorScheme='green' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Activate</Button>}
+                                    </Flex>
+                                    <RadioGroup onChange={(e)=>{OnRoutineColorChange(e, routineInd)}} value={routine.color} mt="5px">
+                                        <Flex direction='row' gap="10px">
+                                            <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                                        </Flex>
+                                    </RadioGroup>
+                                </Flex>
                             </Flex>
-                        </RadioGroup>
-                    </Flex>
+                        </ScaleFade>
+                    </Box>
                 );
             })
             }
             </Flex>
         </Flex>
 
-        <Heading size="lg">Goals</Heading>
+        <Flex direction="column">
+            <Heading size="lg">Goals</Heading>
+            <Text>Create Reoccuring AI-scheduled tasks (Different Times Each Day)</Text>
+        </Flex>
         <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
             <Flex direction={["column","column","column","row"]} align={["start","start","start","center"]} gap="30px">
-                <FormControl>
-                    <FormLabel>Add any long term habits you want to form or goals that you have</FormLabel>
+                <FormControl isInvalid={goalInputError}>
+                    <FormLabel>Add any goals you have that you can set time apart each day to acheive</FormLabel>
+                    <FormErrorMessage>Please Use a Valid Goal Name</FormErrorMessage>
                     <Flex direction="row">
-                        <Input bg="white" value={goalInput} onChange={(e)=>{setGoalInput(e.target.value)}} placeholder='I want to learn to...' type="text"/>
-                        <Button colorScheme='blue' onClick={()=>{
+                        <Input bg="white" value={goalInput} 
+                        onKeyDown={(e)=>{
+                            if(e.key=='Enter'){
+                                setGoals([...goals, goalInput])
+                                setGoalInput("")
+                            }
+                        }} 
+                        onChange={(e)=>{setGoalInput(e.target.value)}} placeholder='I want to learn to...' type="text"/>
+                        <Button colorScheme='blue' bg="#002B5B" onClick={()=>{
                         setGoals([...goals, goalInput])
                         setGoalInput("")
                         }}>Add</Button>
@@ -204,10 +244,31 @@ export default function ProfileTab(props : any) {
                     <FormHelperText>Example: I want to learn Spanish</FormHelperText>
                 </FormControl>
             </Flex>
-            <Flex direction="column" gap="3px"> 
+            <Flex direction="column" gap="20px"> 
                 {
                     goals.map((goal : string, index : number)=>{
-                        return (<Text key={index}>{(index + 1)+". "+goal}</Text>)
+                        return (
+                            <Box key={index}>
+                                <ScaleFade initialScale={0.1} in={true}>
+                                    <Flex direction="row" border="4px solid" borderColor="black" p="20px" bg="#E4DCCF" justify="space-between" align="start" px="50px">
+                                        <Flex direction="column">
+                                            <Heading size="sm">Lifestyle Goal #{index + 1}</Heading>
+                                            <Text fontSize="2xl">{goal}</Text>
+                                        </Flex>
+
+                                        <Tooltip hasArrow label='Delete Goal' bg='red.600' placement='top'>
+                                            <IconButton
+                                                colorScheme='red'
+                                                aria-label='delete'
+                                                size="xs"
+                                                onClick={()=>{removeGoal(index)}}
+                                                icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
+                                            />
+                                        </Tooltip>
+                                    </Flex>
+                                </ScaleFade>
+                            </Box>
+                        )
                     })
                 }
             </Flex>

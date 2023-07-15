@@ -9,10 +9,10 @@ import {
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 import ProfileTab from './tabs/ProfileTab'
-import CalenderTab from './tabs/CalenderTab'
+import CalenderTab from './tabs/CalendarTab'
 
 export default function LoggedIn() {
-    const [pageIndex, setPageIndex] = React.useState(0);
+    const [pageIndex, setPageIndex] = React.useState(1);
     const [schedule, setSchedule] = React.useState([
         {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"1:30am", end:"2:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
@@ -69,6 +69,7 @@ export default function LoggedIn() {
     const [routineList, setRoutineList] = React.useState([
         // {title: "Work", start: 16, end: 32, active: true, isConflicting: "", color: "#FFD580"}
     ]);
+    const [aiTasks, setAITasks] = React.useState([]);
 
     const [scheduleRegenTrigger,setScheduleRegenTrigger] = React.useState(false)
 
@@ -190,7 +191,7 @@ export default function LoggedIn() {
 
             while(tmpStart != tmpEnd) {
                 if(tmpSchedule[tmpStart].activity != "[EMPTY]") {
-                    routine.isConflicting = tmpSchedule[tmpStart].activity
+                    routine.isConflicting = (tmpSchedule[tmpStart].activity + "!")
                     routine.active = false;
                     routineConflicts = true;
                     break;
@@ -260,6 +261,8 @@ export default function LoggedIn() {
                         setGoals={setGoals}
                         timeList={timeList}
                         recomputeSchedule={recomputeSchedule}
+                        tasks={aiTasks}
+                        setTasks={setAITasks}
                     />
                 }
                 

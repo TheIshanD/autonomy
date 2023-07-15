@@ -6,7 +6,7 @@ import "react-color-palette/lib/css/styles.css";
 
 import { 
   Button,
-  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage, BreadcrumbLink, Radio, RadioGroup, Tooltip
+  Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Spacer, Divider, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, IconButton, Icon, FormErrorMessage, BreadcrumbLink, Radio, RadioGroup, Tooltip, ScaleFade
 } from '@chakra-ui/react'
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
@@ -15,10 +15,9 @@ import { ColorPicker, useColor } from 'react-color-palette'
 import { FaWindowClose, FaPlusSquare, FaLock, FaUnlockAlt } from "react-icons/fa";
 
 export default function CalenderTab(props : any) {
-    const {schedule, setSchedule, sleepTime, wakeTime, timeList, recomputeSchedule} = props;
+    const {schedule, setSchedule, sleepTime, wakeTime, timeList, tasks, setTasks} = props;
 
     const [taskInput, setTaskInput] = React.useState("");
-    const [tasks, setTasks] = React.useState<string[]>([]);
 
     const [hasManualTaskAddTitleError, setHasManualTaskAddTitleError] = React.useState(false)
     const [hasManualTaskAddTimeError, setHasManualTaskAddTimeError] = React.useState(false);
@@ -127,9 +126,9 @@ export default function CalenderTab(props : any) {
                 var curr = modalTaskIndex;
                 var isFirstIteration = true;
                 while(curr != modalTaskIndexEnd) {
-                    tempSchedule[(curr + wakeTime)%48].activity = modalTaskInput;
-                    tempSchedule[(curr + wakeTime)%48].color = color;
-                    tempSchedule[(curr + wakeTime)%48].isContinuation = !isFirstIteration;
+                    tempSchedule[toAbsoluteTime(curr)].activity = modalTaskInput;
+                    tempSchedule[toAbsoluteTime(curr)].color = color;
+                    tempSchedule[toAbsoluteTime(curr)].isContinuation = !isFirstIteration;
         
                     curr += 1;
                     curr %= 48;
@@ -160,8 +159,8 @@ export default function CalenderTab(props : any) {
         const activityName = tempSchedule[(key + wakeTime)%48].activity;
 
         var increment = 0;
-        while(tempSchedule[(key + wakeTime + increment)%48].activity == activityName) {
-            tempSchedule[(key + wakeTime + increment)%48].activity = "[EMPTY]"
+        while(tempSchedule[toAbsoluteTime(key+increment)].activity == activityName) {
+            tempSchedule[toAbsoluteTime(key+increment)].activity = "[EMPTY]"
             increment++;
         }
 
@@ -187,6 +186,15 @@ export default function CalenderTab(props : any) {
         onClose()
     }
 
+    const aiTaskColorChange = (e : any, taskIndex : number)=>{
+        const tmpTasks = [...tasks]
+        tmpTasks[taskIndex].color = e
+        setTasks(tmpTasks)
+    }
+
+    const aiTaskTimeChange = (e : any, taskIndex : number)=>{
+
+    }
     
     return (
     <Flex direction="column" p="30px" gap=" 30px" width="100%">
@@ -213,23 +221,30 @@ export default function CalenderTab(props : any) {
                             {slot.activity!="[EMPTY]" &&
                                 <Flex direction="row" width="90%" height="100%">
                                     <Divider width={["0","5%","5%","5%"]} m={0} border="1px solid" borderColor="gray" />
-
+                                    
                                     <Flex direction="row" bg={slot.color} width="90%" justify="center" align="center" px={["10px","10px","10px","20px"]} borderTop={slot.isContinuation?"":"3px solid"} borderColor="black">
-                                        <Flex direction={["column","row","row","row"]} width="100%" justify="left" align="baseline" hidden={slot.isContinuation}>
-                                            <Heading size={["xs","xs","sm","md"]} maxW={["120px","100000px","100000px","100000px","100000px"]} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{slot.activity}</Heading>
-                                            <Text fontSize={["2xs","2xs","xs","sm"]} ml="5px" mr="30px">{slot.start}</Text>
-                                        </Flex>
-                                        {!slot.isContinuation &&
-                                            <Tooltip hasArrow label='Delete Task' bg='red.600' placement='top'>
-                                                <IconButton
-                                                    colorScheme='red'
-                                                    aria-label='delete'
-                                                    size="xs"
-                                                    onClick={()=>{removeActivity(key)}}
-                                                    icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
-                                                />
-                                            </Tooltip>
-                                        }
+                                        <Box width="100%">
+                                            <ScaleFade initialScale={0.7} in={true}>
+                                                <Flex direction="row" justify="center" align="center" px={["10px","10px","10px","20px"]} width="100%">
+                                                    <Flex direction={["column","row","row","row"]} width="100%" justify="left" align="baseline" hidden={slot.isContinuation}>
+                                                        <Heading size={["xs","xs","sm","md"]} maxW={["120px","100000px","100000px","100000px","100000px"]} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{slot.activity}</Heading>
+                                                        <Text fontSize={["2xs","2xs","xs","sm"]} ml="5px" mr="30px">{slot.start}</Text>
+                                                    </Flex>
+                                                    <Spacer />
+                                                    {!slot.isContinuation &&
+                                                        <Tooltip hasArrow label='Delete Task' bg='red.600' placement='top'>
+                                                            <IconButton
+                                                                colorScheme='red'
+                                                                aria-label='delete'
+                                                                size="xs"
+                                                                onClick={()=>{removeActivity(key)}}
+                                                                icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
+                                                            />
+                                                        </Tooltip>
+                                                    }
+                                                </Flex>
+                                            </ScaleFade>
+                                        </Box>
                                     </Flex>
 
                                     <Divider width={["0","5%","5%","5%"]} m={0} border="1px solid" borderColor="gray" />
@@ -243,67 +258,92 @@ export default function CalenderTab(props : any) {
 
             <Flex direction="column" width={["100%","100%","100%","30%"]} pl={["0","0","0","20px"]} pt={["20px","20px","20px","0px"]} pr={["0","0","0","20px"]}>
                 <FormControl border="4px solid" borderColor="black" p="10px" bg="#F9F5EB">
+                    <Heading mb="20px" size="lg">AI Scheduler</Heading>
                     <FormLabel>Add any one-off tasks that you want to accomplish today</FormLabel>
                     <Flex direction="row">
-                    <Input bg="white" value={taskInput} onChange={(e)=>{setTaskInput(e.target.value)}} placeholder='Do Something' type="text"/>
-                    <Button colorScheme='blue' onClick={()=>{
-                        setTasks([...tasks, taskInput])
-                        setTaskInput("")
-                    }}>Add</Button>
+
+                        <Input 
+                        bg="white" 
+                        value={taskInput} 
+                        onKeyDown={(e)=>{
+                            if(e.key=='Enter'){
+                                const tmpTasks = [...tasks];
+                                tmpTasks.push({title: taskInput, color: "#FF6969", duration: ""});
+                                setTasks(tmpTasks)
+                                setTaskInput("")
+                            }
+                        }} 
+                        onChange={(e)=>{setTaskInput(e.target.value)}}
+                        placeholder='Do Something' type="text"/>
+
+                        <Button colorScheme='blue' bg="#002B5B" onClick={()=>{
+                            const tmpTasks = [...tasks];
+                            tmpTasks.push({title: taskInput, color: "#FF6969", duration: ""});
+                            setTasks(tmpTasks)
+                            setTaskInput("")
+                        }}>Add</Button>
                     </Flex>
                 </FormControl>
 
                 {tasks.length >= 1 &&
-                    <Flex direction="column" mt="20px" gap="20px">
-                        <Heading>Today&apos;s AI Tasks</Heading>
+                    <Flex direction="column" mt="40px" gap="20px">
+                        <Heading>AI Scheduled Tasks</Heading>
                         {
-                        tasks.map((task, key)=>{
+                        tasks.map((task : any, taskIndex : number)=>{
                             return (
-                                <Flex key={key} direction="column" bg="#F9F5EB" p="10px" border="4px solid" borderColor="black" align="right">
-                                    <Flex direction="row" justify={"end"} mb="10px">
-                                        <IconButton
-                                            colorScheme='red'
-                                            aria-label='delete'
-                                            size="xs"
-                                            onClick={()=>{removeAITask(key)}}
-                                            icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
-                                        />
-                                    </Flex>
-                                    <Flex direction="row" align="center">
-                                        <Text key={key} fontWeight="900">{task}</Text>
-                                        <Spacer />
-                                        <Select bg="#EA5455" color="white" width="50%">
-                                            <chakra.option value="">AI Guess</chakra.option>
-                                            <chakra.option value="0.5 hours">0.5 hours</chakra.option>
-                                            <chakra.option value="1 hour">1 hour</chakra.option>
-                                            <chakra.option value="1.5 hour">1.5 hours</chakra.option>
-                                            <chakra.option value="2 hours">2 hours</chakra.option>
-                                            <chakra.option value="2.5 hours">2.5 hours</chakra.option>
-                                            <chakra.option value="3 hours">3 hours</chakra.option>
-                                            <chakra.option value="3.5 hours">3.5 hours</chakra.option>
-                                            <chakra.option value="4 hours">4 hours</chakra.option>
-                                            <chakra.option value="4.5 hours">4.5 hours</chakra.option>
-                                            <chakra.option value="5 hours">5 hours</chakra.option>
-                                            <chakra.option value="5.5 hours">5.5 hours</chakra.option>
-                                            <chakra.option value="6 hours">6 hours</chakra.option>
-                                            <chakra.option value="6.5 hours">6.5 hours</chakra.option>
-                                            <chakra.option value="7 hours">7 hours</chakra.option>
-                                            <chakra.option value="7.5 hours">7.5 hours</chakra.option>
-                                            <chakra.option value="8 hours">82 hours</chakra.option>
-                                        </Select>
-                                    </Flex>
+                                <Box key={taskIndex}>
+                                    <ScaleFade initialScale={0.7} in={true}>
+                                        <Flex direction="column" bg="#F9F5EB" p="10px" border="4px solid" borderColor="black" align="right">
+                                            <Flex direction="row" mb="3px">
+                                                <Text width="50%">Task Title:</Text>
+                                                <Flex direction="row" width="50%" justify="space-between">
+                                                    <Text>Time:</Text>
+                                                    <IconButton
+                                                        colorScheme='red'
+                                                        aria-label='delete'
+                                                        size="xs"
+                                                        onClick={()=>{removeAITask(taskIndex)}}
+                                                        icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
+                                                    />
+                                                </Flex>
+                                            </Flex>
+                                            <Flex direction="row" align="start">
+                                                <Text fontWeight="900">{task.title}</Text>
+                                                <Spacer />
+                                                <Select bg={task.color} color="black" minW="50%" maxW="50%" onChange={(e)=>{aiTaskTimeChange(e, taskIndex)}} value={task.duration}>
+                                                    <chakra.option value="">AI Guess</chakra.option>
+                                                    <chakra.option value="0.5 hours">0.5 hours</chakra.option>
+                                                    <chakra.option value="1 hour">1 hour</chakra.option>
+                                                    <chakra.option value="1.5 hour">1.5 hours</chakra.option>
+                                                    <chakra.option value="2 hours">2 hours</chakra.option>
+                                                    <chakra.option value="2.5 hours">2.5 hours</chakra.option>
+                                                    <chakra.option value="3 hours">3 hours</chakra.option>
+                                                    <chakra.option value="3.5 hours">3.5 hours</chakra.option>
+                                                    <chakra.option value="4 hours">4 hours</chakra.option>
+                                                    <chakra.option value="4.5 hours">4.5 hours</chakra.option>
+                                                    <chakra.option value="5 hours">5 hours</chakra.option>
+                                                    <chakra.option value="5.5 hours">5.5 hours</chakra.option>
+                                                    <chakra.option value="6 hours">6 hours</chakra.option>
+                                                    <chakra.option value="6.5 hours">6.5 hours</chakra.option>
+                                                    <chakra.option value="7 hours">7 hours</chakra.option>
+                                                    <chakra.option value="7.5 hours">7.5 hours</chakra.option>
+                                                    <chakra.option value="8 hours">82 hours</chakra.option>
+                                                </Select>
+                                            </Flex>
 
-                                    <RadioGroup mt="5px">
-                                        <Flex direction='row' gap="10px">
-                                            <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
-                                            <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
-                                            <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
-                                            <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
-                                            <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
-                                            <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                                            <RadioGroup mt="5px" onChange={(e)=>{aiTaskColorChange(e, taskIndex)}} value={task.color}>
+                                                <Flex direction='row' gap="10px">
+                                                    <Radio size="lg" value="#FF6969" bgColor="#FF6969" _checked={{background:"#FF6969", border: "3px solid", borderColor: "black"}}></Radio>
+                                                    <Radio size="lg" value="#FFD580" bgColor="#FFD580" _checked={{background:"#FFD580", border: "3px solid", borderColor: "black"}}></Radio>
+                                                    <Radio size="lg" value="#ffffe0" bgColor="#ffffe0" _checked={{background:"#ffffe0", border: "3px solid", borderColor: "black"}}></Radio>
+                                                    <Radio size="lg" value="#90EE90" bgColor="#90EE90" _checked={{background:"#90EE90", border: "3px solid", borderColor: "black"}}></Radio>
+                                                    <Radio size="lg" value="#ADD8E6" bgColor="#ADD8E6" _checked={{background:"#ADD8E6", border: "3px solid", borderColor: "black"}}></Radio>
+                                                    <Radio size="lg" value="#D6B4FC" bgColor="#D6B4FC" _checked={{background:"#D6B4FC", border: "3px solid", borderColor: "black"}}></Radio>
+                                                </Flex>
+                                            </RadioGroup>
                                         </Flex>
-                                    </RadioGroup>
-                                </Flex>
+                                    </ScaleFade>
+                                </Box>
                             )
                         })
                         }
