@@ -11,7 +11,9 @@ import Header from '@/components/Header'
 import ProfileTab from './tabs/ProfileTab'
 import CalenderTab from './tabs/CalendarTab'
 
-export default function LoggedIn() {
+export default function LoggedIn(props : any) {
+    const { user } = props;
+    
     const [pageIndex, setPageIndex] = React.useState(1);
     const [schedule, setSchedule] = React.useState([
         {start:"1:00am", end:"1:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
@@ -28,7 +30,7 @@ export default function LoggedIn() {
         {start:"6:30am", end:"7:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"7:00am", end:"7:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"7:30am", end:"8:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
-        {start:"8:00am", end:"8:30am", activity: "Wake Up", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"8:00am", end:"8:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"8:30am", end:"9:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"9:00am", end:"9:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"9:30am", end:"10:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
@@ -60,16 +62,14 @@ export default function LoggedIn() {
         {start:"10:30pm", end:"11:00pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"11:00pm", end:"11:30pm", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"11:30pm", end:"12:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
-        {start:"12:00am", end:"12:30am", activity: "Sleep", color: "#ADD8E6", isContinuation: false, isAILocked: true},
+        {start:"12:00am", end:"12:30am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
         {start:"12:30am", end:"1:00am", activity: "[EMPTY]", color: "#ADD8E6", isContinuation: false, isAILocked: true},
     ]);
-    const [sleepTime, setSleepTime] = React.useState(46);
-    const [wakeTime, setWakeTime] = React.useState(14);
-    const [goals, setGoals] = React.useState<string[]>([]);
-    const [routineList, setRoutineList] = React.useState([
-        // {title: "Work", start: 16, end: 32, active: true, isConflicting: "", color: "#FFD580"}
-    ]);
-    const [aiTasks, setAITasks] = React.useState([]);
+    const [sleepTime, setSleepTime] = React.useState(user.sleepTime);
+    const [wakeTime, setWakeTime] = React.useState(user.wakeTime);
+    const [goals, setGoals] = React.useState<string[]>(user.goals);
+    const [routineList, setRoutineList] = React.useState(user.routines);
+    const [aiTasks, setAITasks] = React.useState(user.aiTasks);
 
     const [scheduleRegenTrigger,setScheduleRegenTrigger] = React.useState(false)
 

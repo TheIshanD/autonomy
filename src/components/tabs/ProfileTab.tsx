@@ -89,11 +89,11 @@ export default function ProfileTab(props : any) {
     return (
     <Flex direction="column" p="30px" gap="10px" width="100%">
         <Flex direction="column" mb="20px">
-            <Heading size="2xl">Profile</Heading>
+            <Heading size="2xl" fontWeight="900">Profile</Heading>
             <Text>Changing your profile will automatically reset your existing tasks</Text>
         </Flex>
 
-        <Heading size="lg">Wake and Sleep Times</Heading>
+        <Heading size="lg" fontWeight="900">Wake and Sleep Times</Heading>
         <Flex direction="column" gap="20px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
             <FormControl isRequired>
                 <FormLabel>When do you wake up?</FormLabel>
@@ -116,12 +116,12 @@ export default function ProfileTab(props : any) {
 
         <Flex direction={["column","column","column","row"]} align={["start","start","start","end"]} gap="30px">
                 <Flex direction="column">
-                    <Heading size="lg">Routines</Heading>
+                    <Heading size="lg" fontWeight="900">Routines</Heading>
                     <Text>Schedule Reoccurring Daily Events (Same Time Each Day)</Text>
                 </Flex>
         </Flex>
         <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
-            <Button colorScheme='yellow' onClick={addRoutine}>
+            <Button colorScheme='blue' bg="#002B5B" onClick={addRoutine}>
                 Add New Routine
             </Button>
             <Flex direction="column" gap="30px"> 
@@ -137,7 +137,7 @@ export default function ProfileTab(props : any) {
                                     }
                                     </Flex>
                                     <Flex direction="row" width="50%" justify="end">
-                                        <Tooltip hasArrow label='Delete Routine' bg='red.600' placement='top'>
+                                        <Tooltip hasArrow fontWeight="900" label='Delete Routine' bg='red.600' placement='top'>
                                             <IconButton
                                                 colorScheme='red'
                                                 aria-label='delete'
@@ -153,11 +153,11 @@ export default function ProfileTab(props : any) {
                                     <Flex direction={["column","column","column","row"]} gap="3px" align={["start","start","start","end"]} width="100%">
                                         <FormControl isRequired>
                                             <FormLabel>Routine Title?</FormLabel>
-                                            <Input bg={routine.active?"white":"lightgray"} placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
+                                            <Input bg={routine.active?routine.color:"lightgray"} fontWeight="700" placeholder={"Routine Title"} value={routine.title} onChange={(e)=>{OnRoutineTitleChange(e, routineInd)}}/>
                                         </FormControl>
                                         <FormControl isRequired>
                                             <FormLabel>Routine Start Time?</FormLabel>
-                                            <Select bg={routine.active?"white":"lightgray"} value={routine.start} onChange={(e)=>{OnChangeRoutineStartTime(e, routineInd)}}>
+                                            <Select bg={routine.active?routine.color:"lightgray"} fontWeight="700" value={routine.start} onChange={(e)=>{OnChangeRoutineStartTime(e, routineInd)}}>
                                             {timeList.map((timeString : string, index : number)=>{
                                                 if(wakeTime < sleepTime) {
                                                     if(index >= wakeTime && index <= sleepTime && index < routine.end) {
@@ -177,7 +177,7 @@ export default function ProfileTab(props : any) {
                                         </FormControl>  
                                         <FormControl isRequired>
                                             <FormLabel>Routine End Time?</FormLabel>
-                                            <Select bg={routine.active?"white":"lightgray"} value={routine.end} onChange={(e)=>{OnChangeRoutineEndTime(e, routineInd)}}>
+                                            <Select bg={routine.active?routine.color:"lightgray"} fontWeight="700" value={routine.end} onChange={(e)=>{OnChangeRoutineEndTime(e, routineInd)}}>
                                             {timeList.map((timeString : string, index : number)=>{
                                                 if(wakeTime < sleepTime) {
                                                     if(index >= wakeTime && index <= sleepTime && index > routine.start) {
@@ -195,8 +195,8 @@ export default function ProfileTab(props : any) {
                                             })}
                                             </Select>
                                         </FormControl>
-                                        {routine.active && <Button colorScheme='red' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Deactivate</Button>}
-                                        {!routine.active && <Button colorScheme='green' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}>Activate</Button>}
+                                        {routine.active && <Button colorScheme='red' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}><Text>Deactivate</Text></Button>}
+                                        {!routine.active && <Button colorScheme='green' minW="100px" onClick={()=>{toggleRoutine(routineInd)}}><Text>Activate</Text></Button>}
                                     </Flex>
                                     <RadioGroup onChange={(e)=>{OnRoutineColorChange(e, routineInd)}} value={routine.color} mt="5px">
                                         <Flex direction='row' gap="10px">
@@ -219,7 +219,7 @@ export default function ProfileTab(props : any) {
         </Flex>
 
         <Flex direction="column">
-            <Heading size="lg">Goals</Heading>
+            <Heading size="lg" fontWeight="900">Goals</Heading>
             <Text>Create Reoccuring AI-scheduled tasks (Different Times Each Day)</Text>
         </Flex>
         <Flex direction="column" gap="30px" mt="10px" border="4px solid" borderColor="black" p="20px" bg="#F9F5EB" mb="30px" px="40px">
@@ -256,7 +256,7 @@ export default function ProfileTab(props : any) {
                                             <Text fontSize="2xl">{goal}</Text>
                                         </Flex>
 
-                                        <Tooltip hasArrow label='Delete Goal' bg='red.600' placement='top'>
+                                        <Tooltip hasArrow fontWeight="900" label='Delete Goal' bg='red.600' placement='top'>
                                             <IconButton
                                                 colorScheme='red'
                                                 aria-label='delete'

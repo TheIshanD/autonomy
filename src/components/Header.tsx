@@ -6,7 +6,7 @@ export default function Header(props : any) {
 
     return (
     <Flex bg="#002B5B" direction="row" minW="100%" gap="30px" color="white">
-        <Flex direction="row" align="center" justify="center" p="5px" gap="10px">
+        <Flex direction="row" align="center" justify="center" gap="10px" pl="25px">
             <Icon as={FaRobot} boxSize="30px"/>
             <Heading fontWeight="900" fontSize="xl">Autonomy AI</Heading>
         </Flex>

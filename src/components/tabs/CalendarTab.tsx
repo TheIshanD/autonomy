@@ -15,7 +15,7 @@ import { ColorPicker, useColor } from 'react-color-palette'
 import { FaWindowClose, FaPlusSquare, FaLock, FaUnlockAlt } from "react-icons/fa";
 
 export default function CalenderTab(props : any) {
-    const {schedule, setSchedule, sleepTime, wakeTime, timeList, tasks, setTasks} = props;
+    const {schedule, setSchedule, sleepTime, wakeTime, timeList, tasks, setTasks, goals} = props;
 
     const [taskInput, setTaskInput] = React.useState("");
 
@@ -34,6 +34,98 @@ export default function CalenderTab(props : any) {
     const [modalTaskBetweenError, setModalTaskBetweenError] = React.useState("");
 
     const [color, setColor] = React.useState("#FF6969");
+
+
+    const addTasksAI = async () => {
+        const fetchConfig = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                schedule: awakeSchedule(),
+                tasks: tasks,
+                goals: goals,
+            }), 
+        }
+
+        const response = await fetch("/api/schedule/add-tasks", fetchConfig);
+        const data = await response.json();
+  
+        const aiString : string = data.response;
+
+        const responseTimes = aiString.split("\n")
+
+        const tmpSchedule = [...schedule]
+
+        var valid = true
+
+        responseTimes.map((row : string, index : number)=>{
+            if(index!=0) {
+                const firstDashIndex = row.indexOf("-")
+                const secondDashIndex = row.indexOf("-" , firstDashIndex + 1)
+
+                const startTime = row.substring(0, firstDashIndex)
+                const endTime = row.substring(firstDashIndex + 1, secondDashIndex)
+
+                const startIndex = timeList.indexOf(startTime)
+                const endIndex = timeList.indexOf(endTime)
+                
+                if(wakeTime < sleepTime) {
+                    if(startIndex < wakeTime || endIndex > sleepTime) {
+                        valid = false
+                    }
+                }
+
+                if(wakeTime > sleepTime) {
+                    if(startIndex >= sleepTime && startIndex < wakeTime) {
+                        valid = false
+                    }
+                    if(endTime > sleepTime && endTime <= wakeTime) {
+                        valid = false
+                    }
+                }
+
+                var currIndex = startIndex
+                while(currIndex != endIndex) {
+                    if(schedule[currIndex].activity != "[EMPTY]") {
+                        valid = false
+                    }
+
+                    currIndex++;
+                    currIndex%=48
+                }
+            }
+        })
+
+        if(valid) {
+            responseTimes.map((row : string, index : number)=>{
+                if(index!=0) {
+                    const firstDashIndex = row.indexOf("-")
+                    const secondDashIndex = row.indexOf("-" , firstDashIndex + 1)
+    
+                    const startTime = row.substring(0, firstDashIndex)
+                    const endTime = row.substring(firstDashIndex + 1, secondDashIndex)
+                    const activity = row.substring(secondDashIndex + 2)
+    
+                    const startIndex = timeList.indexOf(startTime)
+                    const endIndex = timeList.indexOf(endTime)
+                    
+                    var currIndex = startIndex
+                    var isFirstIteration = true
+                    while(currIndex != endIndex) {
+                        tmpSchedule[currIndex].activity = activity
+                        tmpSchedule[currIndex].isContinuation = !isFirstIteration
+    
+                        currIndex++;
+                        currIndex%=48
+                    }
+                }
+            })
+    
+            setSchedule(tmpSchedule)
+        }
+    }
 
     const awakeSchedule = ()=>{
         var tmpArr = [];
@@ -193,25 +285,27 @@ export default function CalenderTab(props : any) {
     }
 
     const aiTaskTimeChange = (e : any, taskIndex : number)=>{
-
+        const tmpTasks = [...tasks]
+        tmpTasks[taskIndex].duration = e.target.value
+        setTasks(tmpTasks)
     }
     
     return (
     <Flex direction="column" p="30px" gap=" 30px" width="100%">
-        <Heading size="2xl">Calendar</Heading>
+        <Heading size="2xl" fontWeight="900">Calendar</Heading>
 
         <Flex direction={["column","column","column","row"]}>
             <Flex direction="column" bg="#F9F5EB" width={["100%","100%","100%","70%"]} p="20px" border="4px solid" borderColor="black">
                 {awakeSchedule().map((slot, key)=>{              
                     return (
                         <Flex key={key} direction="row" width="100%" height={["60px","50px","40px","35px"]} justify="start" align="start" bg="#F9F5EB">
-                            {key%2==0 && <Text fontSize="md" mr={["10px","0px","0px","0px"]}>{slot.start}</Text>}
+                            {key%2==0 && <Heading fontSize="lg" fontWeight="800" mr={["10px","0px","0px","0px"]}>{slot.start}</Heading>}
                             <Spacer />
                             {slot.activity=="[EMPTY]" &&
                                 <Flex direction="column" width="90%" height="100%" align="center">
                                     <Divider m={0} width={["100%","100%","100%","100%"]} border="1px solid" borderColor="gray" />
 
-                                    <Tooltip hasArrow label={"Add Task (" + slot.start + ")"} bg="#00ab66" placement='top'>
+                                    <Tooltip hasArrow fontWeight="900" label={"Add Task (" + slot.start + ")"} bg="#00ab66" placement='top'>
                                         <Flex onClick={()=>{setModalTaskIndex(key);setModalTaskIndexEnd((key + 1)%48);onOpen()}} opacity="0" width="90%" height="100%" justify="center" align="center" _hover={{background: "#00ab66", opacity: "1"}}>
                                             <Icon as={FaPlusSquare} color="white" boxSize="50%"/>
                                         </Flex>
@@ -227,12 +321,12 @@ export default function CalenderTab(props : any) {
                                             <ScaleFade initialScale={0.7} in={true}>
                                                 <Flex direction="row" justify="center" align="center" px={["10px","10px","10px","20px"]} width="100%">
                                                     <Flex direction={["column","row","row","row"]} width="100%" justify="left" align="baseline" hidden={slot.isContinuation}>
-                                                        <Heading size={["xs","xs","sm","md"]} maxW={["120px","100000px","100000px","100000px","100000px"]} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{slot.activity}</Heading>
+                                                        <Heading fontWeight="800" size={["xs","xs","sm","md"]} maxW={["120px","100000px","100000px","100000px","100000px"]} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{slot.activity}</Heading>
                                                         <Text fontSize={["2xs","2xs","xs","sm"]} ml="5px" mr="30px">{slot.start}</Text>
                                                     </Flex>
                                                     <Spacer />
                                                     {!slot.isContinuation &&
-                                                        <Tooltip hasArrow label='Delete Task' bg='red.600' placement='top'>
+                                                        <Tooltip hasArrow fontWeight="900" label='Delete Task' bg='red.600' placement='top'>
                                                             <IconButton
                                                                 colorScheme='red'
                                                                 aria-label='delete'
@@ -258,10 +352,9 @@ export default function CalenderTab(props : any) {
 
             <Flex direction="column" width={["100%","100%","100%","30%"]} pl={["0","0","0","20px"]} pt={["20px","20px","20px","0px"]} pr={["0","0","0","20px"]}>
                 <FormControl border="4px solid" borderColor="black" p="10px" bg="#F9F5EB">
-                    <Heading mb="20px" size="lg">AI Scheduler</Heading>
-                    <FormLabel>Add any one-off tasks that you want to accomplish today</FormLabel>
+                    <Heading mb="10px" size="lg" fontWeight="900">Task List</Heading>
+                    <FormLabel>Add any unscheduled tasks that you want to accomplish today</FormLabel>
                     <Flex direction="row">
-
                         <Input 
                         bg="white" 
                         value={taskInput} 
@@ -283,11 +376,14 @@ export default function CalenderTab(props : any) {
                             setTaskInput("")
                         }}>Add</Button>
                     </Flex>
+
+                    <FormHelperText>Example: Call John about house repairs</FormHelperText>
+                    <FormHelperText>Example: Shower</FormHelperText>
                 </FormControl>
 
                 {tasks.length >= 1 &&
                     <Flex direction="column" mt="40px" gap="20px">
-                        <Heading>AI Scheduled Tasks</Heading>
+                        {/* <Heading>Task List</Heading> */}
                         {
                         tasks.map((task : any, taskIndex : number)=>{
                             return (
@@ -297,18 +393,20 @@ export default function CalenderTab(props : any) {
                                             <Flex direction="row" mb="3px">
                                                 <Text width="50%">Task Title:</Text>
                                                 <Flex direction="row" width="50%" justify="space-between">
-                                                    <Text>Time:</Text>
-                                                    <IconButton
-                                                        colorScheme='red'
-                                                        aria-label='delete'
-                                                        size="xs"
-                                                        onClick={()=>{removeAITask(taskIndex)}}
-                                                        icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
-                                                    />
+                                                    <Text>Duration:</Text>
+                                                    <Tooltip label="Delete Task" bg="red.600" hasArrow placement="top">
+                                                        <IconButton
+                                                            colorScheme='red'
+                                                            aria-label='delete'
+                                                            size="xs"
+                                                            onClick={()=>{removeAITask(taskIndex)}}
+                                                            icon={<Icon as={FaWindowClose} boxSize={["10px","10px","15px"]}/>}
+                                                        />
+                                                    </Tooltip>
                                                 </Flex>
                                             </Flex>
                                             <Flex direction="row" align="start">
-                                                <Text fontWeight="900">{task.title}</Text>
+                                                <Heading size="md" fontWeight="900">{task.title}</Heading>
                                                 <Spacer />
                                                 <Select bg={task.color} color="black" minW="50%" maxW="50%" onChange={(e)=>{aiTaskTimeChange(e, taskIndex)}} value={task.duration}>
                                                     <chakra.option value="">AI Guess</chakra.option>
@@ -347,8 +445,8 @@ export default function CalenderTab(props : any) {
                             )
                         })
                         }
-                        <Button colorScheme='yellow' mt="10px">
-                            Send to AI
+                        <Button colorScheme='blue' bg="#002B5B"  mt="10px" onClick={()=>{addTasksAI()}}>
+                            Schedule Tasks With AI
                         </Button>
                     </Flex>
                 }
@@ -358,11 +456,13 @@ export default function CalenderTab(props : any) {
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-            <ModalHeader background={color}>Add Task To Time</ModalHeader>
+            <ModalHeader background={color}>
+                <Heading fontWeight="800" fontSize="xl">Add Task</Heading>
+            </ModalHeader>
             <ModalCloseButton onClick={closeModal}/>
             <ModalBody>
                 <Flex direction="column" width="100%" gap="20px">
-                    <FormControl isInvalid={hasManualTaskAddTitleError}>
+                    <FormControl isInvalid={hasManualTaskAddTitleError} isRequired>
                         <FormLabel>Task Title</FormLabel>
                         <Input bg="white" value={modalTaskInput} onChange={(e)=>{setModalTaskInput(e.target.value)}} placeholder='Do Something' type="text"/>
                         <FormErrorMessage>Must Include Some Text</FormErrorMessage>

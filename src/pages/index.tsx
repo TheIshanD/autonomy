@@ -14,6 +14,14 @@ export default function Home() {
 
   const [loggedIn, setLoggedIn ] = React.useState(true);
 
+  const user = {
+    sleepTime: 46,
+    wakeTime: 14,
+    goals: [],
+    routines: [],
+    aiTasks:[],
+  }
+
   return (
     <Flex direction="column" bgColor="brand.100" minH="100vh" align="center">
       {!loggedIn && 
@@ -23,7 +31,7 @@ export default function Home() {
         </Box>
       }
 
-      {loggedIn && <LoggedIn />}
+      {loggedIn && <LoggedIn user={user} />}
     </Flex>
   )
 }
