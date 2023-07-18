@@ -49,10 +49,12 @@ export default function CalenderTab(props : any) {
             }), 
         }
 
-        const response = await fetch("/api/schedule/add-tasks", fetchConfig);
+        const response = await fetch("/api/schedule/add-tasks-hf", fetchConfig);
         const data = await response.json();
   
         const aiString : string = data.response;
+
+        console.log(aiString)
 
         const responseTimes = aiString.split("\n")
 

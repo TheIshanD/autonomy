@@ -17,6 +17,7 @@
     "@fontsource-variable/nunito": "^5.0.6",
     "@fontsource-variable/raleway": "^5.0.6",
     "@fontsource-variable/urbanist": "^5.0.6",
+    "@huggingface/inference": "^2.6.1",
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
