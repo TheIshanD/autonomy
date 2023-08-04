@@ -9,28 +9,26 @@ import {
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 import LoggedIn from '@/components/LoggedIn'
+import LoggedOut from '@/components/LoggedOutComponents/LoggedOut'
 import { User } from '@/utils/types'
 
 export default function Home() {
 
-  const [loggedIn, setLoggedIn ] = React.useState(true);
+  const [loggedIn, setLoggedIn ] = React.useState(false);
 
-  const user : User = {
+  const user: User = {
     sleepTime: 46,
     wakeTime: 14,
     goals: [],
     routines: [],
     unscheduledTasks:[],
-    scheduledTasks: [], // Not fully integrated yet
+    scheduledTasks: [],
   }
 
   return (
     <Flex direction="column" bgColor="brand.100" minH="100vh" align="center">
       {!loggedIn && 
-        <Box width="100%">
-
-          <Heading>Please Log In</Heading>
-        </Box>
+        <LoggedOut />
       }
 
       {loggedIn && <LoggedIn user={user} />}

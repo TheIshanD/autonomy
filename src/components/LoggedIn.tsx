@@ -96,7 +96,7 @@ export default function LoggedIn(props : {user:User}) {
 
 
 
-    const recomputeSchedule = () : void =>{
+    const recomputeSchedule = (): void =>{
         setScheduleRegenTrigger(!scheduleRegenTrigger)
     }
 
@@ -185,7 +185,8 @@ export default function LoggedIn(props : {user:User}) {
                     isFirstIteration = false;
                 }
             } else {
-                //Basically the current task conflicts with sleep or a routine or a previous task, I will make the task disappear in that case
+                //Basically the current task conflicts with sleep or a routine or a previous task, 
+                //I will make the task disappear in that case for the time being as it is being overallapped by soemthing with higher precedence
             }
         })
 
@@ -194,7 +195,7 @@ export default function LoggedIn(props : {user:User}) {
 
     return (
         <Box width="100%" height="100%" bg="#E4DCCF">
-            <Header/>
+            <Header loggedIn={true}/>
 
             <Flex direction={["column","column","row","row"]} width="100%" minH="100vh">
                 <SideNav pageIndex={pageIndex} setPageIndex={setPageIndex}/> 
