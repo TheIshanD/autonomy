@@ -4,8 +4,11 @@ import { FaRobot, FaRegCalendarAlt, FaListAlt, FaUserAlt } from "react-icons/fa"
 
 import NextLink from 'next/link'
 
+interface ProfileTabProps {
+    pageIndex: number, setPageIndex: React.Dispatch<React.SetStateAction<number>>
+}
 
-export default function SideNav(props: any) {
+export default function SideNav(props: ProfileTabProps) {
     const {pageIndex, setPageIndex} = props;
     return (
     <Flex bg="#EA5455" direction={["row","row","column","column"]} minH="100%" minW="100px" gap="30px" py={["0px","0px","30px","30px"]} justify={["center","center","start","start"]}>

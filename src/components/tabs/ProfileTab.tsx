@@ -6,28 +6,27 @@ import {
   Button,
   Flex, FormControl, FormLabel, Heading, Input, Text, Box, Select, chakra, FormHelperText, Divider, RadioGroup, Radio, ScaleFade, Tooltip, Icon, IconButton, FormErrorMessage
 } from '@chakra-ui/react'
-import SideNav from '@/components/SideNav'
-import Header from '@/components/Header'
 import { FaWindowClose } from 'react-icons/fa'
+import { ProfileTabProps } from '@/utils/types'
 
 
-export default function ProfileTab(props : any) {
-    const {schedule, setSchedule, sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals, timeList, routineList, setRoutineList, recomputeSchedule} = props;
+export default function ProfileTab(props : ProfileTabProps) {
+    const {sleepTime, setSleepTime, wakeTime, setWakeTime, goals, setGoals, timeList, routineList, setRoutineList, recomputeSchedule} = props;
 
     const [goalInput, setGoalInput] = React.useState("");
     const [goalInputError, setGoalInputError] = React.useState(false);
     
-    const OnChangeSleepSelect = (e : any)=>{
+    const OnChangeSleepSelect = (e : any): void =>{
         setSleepTime(parseInt(e.target.value))
         recomputeSchedule()
     }
     
-    const OnChangeWakeUpSelect = (e : any)=>{
+    const OnChangeWakeUpSelect = (e : any): void =>{
         setWakeTime(parseInt(e.target.value));
         recomputeSchedule()
     }
 
-    const OnChangeRoutineStartTime = (e : any, routineInd : number) => {
+    const OnChangeRoutineStartTime = (e : any, routineInd : number): void => {
         const newVal = parseInt(e.target.value);
         const tmpRoutineList = [...routineList];
 
@@ -36,7 +35,7 @@ export default function ProfileTab(props : any) {
         recomputeSchedule()
     }
 
-    const OnChangeRoutineEndTime = (e : any, routineInd : number) => {
+    const OnChangeRoutineEndTime = (e : any, routineInd : number): void => {
         const newVal = parseInt(e.target.value);
         const tmpRoutineList = [...routineList];
 
@@ -45,42 +44,42 @@ export default function ProfileTab(props : any) {
         recomputeSchedule()
     }
 
-    const toggleRoutine = (routineInd : number)=>{
+    const toggleRoutine = (routineInd : number): void =>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].active = !tmpRoutineList[routineInd].active;
         setRoutineList(tmpRoutineList)
         recomputeSchedule()
     }
 
-    const deleteRoutine = (routineInd : number)=>{
+    const deleteRoutine = (routineInd : number): void =>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList.splice(routineInd, 1);
         setRoutineList(tmpRoutineList)
         recomputeSchedule()
     }
 
-    const addRoutine = ()=>{
+    const addRoutine = (): void =>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList.push({title: "Routine #" + (tmpRoutineList.length + 1), start: wakeTime + 1, end: sleepTime, active: true, isConflicting: "", color: "#FFD580"})
         setRoutineList(tmpRoutineList)
         recomputeSchedule()
     }
 
-    const OnRoutineTitleChange = (e : any, routineInd : number)=>{
+    const OnRoutineTitleChange = (e : any, routineInd : number): void =>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].title = e.target.value;
         setRoutineList(tmpRoutineList)
         recomputeSchedule()
     }
 
-    const OnRoutineColorChange = (e : any, routineInd : number)=>{
+    const OnRoutineColorChange = (e : any, routineInd : number): void =>{
         const tmpRoutineList = [...routineList];
         tmpRoutineList[routineInd].color = e;
         setRoutineList(tmpRoutineList)
         recomputeSchedule()
     }
 
-    const removeGoal = (goalInd : number) => {
+    const removeGoal = (goalInd : number): void => {
         const tmpGoalList = [...goals]
         tmpGoalList.splice(goalInd, 1);
         setGoals(tmpGoalList);
@@ -125,7 +124,7 @@ export default function ProfileTab(props : any) {
                 Add New Routine
             </Button>
             <Flex direction="column" gap="30px"> 
-            {routineList.map((routine : any, routineInd : number)=>{
+            {routineList.map((routine, routineInd : number)=>{
                 return (
                     <Box key={routineInd}>
                         <ScaleFade initialScale={0.7} in={true}>

@@ -9,12 +9,13 @@ import {
 import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 import LoggedIn from '@/components/LoggedIn'
+import { User } from '@/utils/types'
 
 export default function Home() {
 
   const [loggedIn, setLoggedIn ] = React.useState(true);
 
-  const user = {
+  const user : User = {
     sleepTime: 46,
     wakeTime: 14,
     goals: [],

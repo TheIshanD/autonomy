@@ -13,8 +13,9 @@ import Header from '@/components/Header'
 import { ColorPicker, useColor } from 'react-color-palette'
 
 import { FaWindowClose, FaPlusSquare } from "react-icons/fa";
+import { CalanderTabProps, ScheduleSlot } from '@/utils/types';
 
-export default function CalenderTab(props : any) {
+export default function CalenderTab(props : CalanderTabProps) {
     const {schedule, setSchedule, sleepTime, wakeTime, timeList, unscheduledTasks, setUnscheduledTasks, goals , scheduledTasks, setScheduledTasks, recomputeSchedule} = props;
 
     const [taskInput, setTaskInput] = React.useState("");
@@ -81,7 +82,7 @@ export default function CalenderTab(props : any) {
                     if(startIndex >= sleepTime && startIndex < wakeTime) {
                         valid = false
                     }
-                    if(endTime > sleepTime && endTime <= wakeTime) {
+                    if(parseInt(endTime) > sleepTime && parseInt(endTime) <= wakeTime) {
                         valid = false
                     }
                 }
@@ -127,16 +128,16 @@ export default function CalenderTab(props : any) {
         }
     }
 
-    const awakeSchedule = ()=>{
+    const awakeSchedule = (): ScheduleSlot[] =>{
         var tmpArr = [];
     
         var tmpWake = wakeTime;
     
         while(tmpWake != sleepTime) {
-          tmpArr.push(schedule[tmpWake]);
+            tmpArr.push(schedule[tmpWake]);
 
-          tmpWake = tmpWake + 1;
-          tmpWake = tmpWake % 48;
+            tmpWake = tmpWake + 1;
+            tmpWake = tmpWake % 48;
         }
     
         tmpArr.push(schedule[sleepTime]);
@@ -144,20 +145,20 @@ export default function CalenderTab(props : any) {
         return tmpArr;
     }
 
-    const toAbsoluteTime =(time : number)=>{
+    const toAbsoluteTime = (time : number): number=>{
         var curr = time;
         curr += wakeTime
         curr %= 48;
         return curr;
     }
 
-    const removeAITask = (key : number)=>{
+    const removeAITask = (key : number): void =>{
         const tmpTasks = [...unscheduledTasks];
         tmpTasks.splice(key, 1);
         setUnscheduledTasks(tmpTasks)
     }
 
-    const addTaskManually = ()=>{
+    const addTaskManually = (): void =>{
         if(wakeTime < sleepTime && (toAbsoluteTime(modalTaskIndex) < wakeTime || toAbsoluteTime(modalTaskIndex) > sleepTime)) {
             setModalStartOutOfBoundsError(true)
         } else if (wakeTime > sleepTime && toAbsoluteTime(modalTaskIndex) > sleepTime && toAbsoluteTime(modalTaskIndex) < wakeTime) {
@@ -240,7 +241,7 @@ export default function CalenderTab(props : any) {
     }
 
 
-    const removeActivity = (key : number)=>{
+    const removeActivity = (key : number): void =>{
         var tempScheduledTasks = [...scheduledTasks];
         tempScheduledTasks = tempScheduledTasks.filter((task)=>{task.start != toAbsoluteTime(key)})
         setScheduledTasks(tempScheduledTasks)
@@ -258,17 +259,17 @@ export default function CalenderTab(props : any) {
         setSchedule(tempSchedule)
     }
 
-    const onChangeStartTask = (e : any)=>{
+    const onChangeStartTask = (e : any): void =>{
         const index = parseInt(e.target.value);
         setModalTaskIndex((index - wakeTime + 48)%48);
     }
 
-    const onChangeEndTask = (e : any)=>{
+    const onChangeEndTask = (e : any): void =>{
         const index = parseInt(e.target.value);
         setModalTaskIndexEnd((index - wakeTime + 48) % 48)
     }
 
-    const closeModal = ()=>{
+    const closeModal = (): void =>{
         setHasManualTaskAddTimeError(false)
         setHasManualTaskAddTitleError(false)
         setModalStartOutOfBoundsError(false)
@@ -277,13 +278,13 @@ export default function CalenderTab(props : any) {
         onClose()
     }
 
-    const aiTaskColorChange = (e : any, taskIndex : number)=>{
+    const aiTaskColorChange = (e : any, taskIndex : number): void=>{
         const tmpTasks = [...unscheduledTasks]
         tmpTasks[taskIndex].color = e
         setUnscheduledTasks(tmpTasks)
     }
 
-    const aiTaskTimeChange = (e : any, taskIndex : number)=>{
+    const aiTaskTimeChange = (e : any, taskIndex : number): void =>{
         const tmpTasks = [...unscheduledTasks]
         tmpTasks[taskIndex].duration = e.target.value
         setUnscheduledTasks(tmpTasks)
@@ -384,7 +385,7 @@ export default function CalenderTab(props : any) {
                     <Flex direction="column" mt="40px" gap="20px">
                         {/* <Heading>Task List</Heading> */}
                         {
-                        unscheduledTasks.map((task : any, taskIndex : number)=>{
+                        unscheduledTasks.map((task, taskIndex : number)=>{
                             return (
                                 <Box key={taskIndex}>
                                     <ScaleFade initialScale={0.7} in={true}>
