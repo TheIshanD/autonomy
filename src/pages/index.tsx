@@ -19,7 +19,8 @@ export default function Home() {
     wakeTime: 14,
     goals: [],
     routines: [],
-    aiTasks:[],
+    unscheduledTasks:[],
+    scheduledTasks: [], // Not fully integrated yet
   }
 
   return (

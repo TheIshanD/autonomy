@@ -10,6 +10,7 @@ import SideNav from '@/components/SideNav'
 import Header from '@/components/Header'
 import ProfileTab from './tabs/ProfileTab'
 import CalenderTab from './tabs/CalendarTab'
+import { FaLess } from 'react-icons/fa'
 
 export default function LoggedIn(props : any) {
     const { user } = props;
@@ -69,7 +70,8 @@ export default function LoggedIn(props : any) {
     const [wakeTime, setWakeTime] = React.useState(user.wakeTime);
     const [goals, setGoals] = React.useState<string[]>(user.goals);
     const [routineList, setRoutineList] = React.useState(user.routines);
-    const [aiTasks, setAITasks] = React.useState(user.aiTasks);
+    const [unscheduledTasks, setUnscheduledTasks] = React.useState(user.unscheduledTasks);
+    const [scheduledTasks, setScheduledTasks] = React.useState(user.scheduledTasks);
 
     const [scheduleRegenTrigger,setScheduleRegenTrigger] = React.useState(false)
 
@@ -201,6 +203,16 @@ export default function LoggedIn(props : any) {
                 tmpStart %= 48;
             }
 
+            if(!routine.isConflicting && wakeTime < sleepTime && routine.start < wakeTime) {
+                routine.isConflicting = "Sleep!"
+                routine.active = false;
+                routineConflicts = true;
+            } else if (!routine.isConflicting && sleepTime < wakeTime && routine.start < wakeTime && routine.start >= sleepTime) {
+                routine.isConflicting = "Sleep!"
+                routine.active = false;
+                routineConflicts = true;
+            }
+
             if(!routineConflicts) {
                 routine.isConflicting = "";
 
@@ -219,6 +231,38 @@ export default function LoggedIn(props : any) {
                         isFirstIteration = false;
                     }
                 }
+            }
+        })
+        
+        scheduledTasks.map((task:any)=>{
+            var tmpStart = task.start
+            var taskConflicts = false
+
+            while(tmpStart != task.end) {
+                if(tmpSchedule[tmpStart].activity != "[EMPTY]") {
+                    taskConflicts = true
+                    break
+                }
+
+                tmpStart++;
+                tmpStart %= 48
+            }
+
+            if(!taskConflicts) {
+                var start = task.start;
+    
+                var isFirstIteration = true;
+                while(start != task.end) {
+                    tmpSchedule[start].activity = task.title
+                    tmpSchedule[start].isContinuation = !isFirstIteration;
+                    tmpSchedule[start].color = task.color;
+    
+                    start++;
+                    start %= 48;
+                    isFirstIteration = false;
+                }
+            } else {
+                //Basically the current task conflicts with sleep or a routine or a previous task, I will make the task disappear in that case
             }
         })
 
@@ -261,8 +305,10 @@ export default function LoggedIn(props : any) {
                         setGoals={setGoals}
                         timeList={timeList}
                         recomputeSchedule={recomputeSchedule}
-                        tasks={aiTasks}
-                        setTasks={setAITasks}
+                        unscheduledTasks={unscheduledTasks}
+                        setUnscheduledTasks={setUnscheduledTasks}
+                        scheduledTasks={scheduledTasks}
+                        setScheduledTasks={setScheduledTasks}
                     />
                 }
                 
