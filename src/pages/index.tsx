@@ -14,7 +14,11 @@ import { User } from '@/utils/types'
 
 export default function Home() {
 
-  const [loggedIn, setLoggedIn ] = React.useState(false);
+  const [loggedIn, setLoggedIn ] = React.useState(true);
+
+  const authenticate = ( username : string, password : string): void =>{
+    setLoggedIn(true)
+  }
 
   const user: User = {
     sleepTime: 46,
@@ -28,7 +32,7 @@ export default function Home() {
   return (
     <Flex direction="column" bgColor="brand.100" minH="100vh" align="center">
       {!loggedIn && 
-        <LoggedOut />
+        <LoggedOut authenticate={authenticate} />
       }
 
       {loggedIn && <LoggedIn user={user} />}
